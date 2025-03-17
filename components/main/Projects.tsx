@@ -15,16 +15,19 @@ const Projects = () => {
           src="/NextWebsite.png"
           title="Space Center Apps"
           description="All in One space app that can use by all users that every tools are needed."
+          url=""
         />
         <ProjectCard
           src="/CardImage.png"
-          title="Student Teacher Monitoring"
-          description="A system that tracts activity of a student where they can show as a productive."
+          title="Project EclipSys"
+          description="A Monitoring tool that built in c++  and react js in web where users can see the monitors of employees ."
+          url=""
         />
         <ProjectCard
           src="/SpaceWebsite.png"
           title="Trading Prediction Tool"
           description="this tool will be used by the stock traders or cryto traders that needed an accurate information."
+          url=""
         />
       </div>
     </div>

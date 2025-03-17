@@ -1,6 +1,5 @@
 "use client"
 import React from 'react'
-import ResumeModal from '../sub/ResumeModal'
 
 const Resume = () => {
   return (
