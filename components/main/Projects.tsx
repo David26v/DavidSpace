@@ -15,17 +15,30 @@ const Projects = () => {
           src="/SpaceCenter.png"
           title="Space Center Apps"
           description="All in One space app that can use by all users that every tools are needed."
+          url=""
         />
         <ProjectCard
+<<<<<<< HEAD
           src="/Student_monitoring.png"
           title="Student Teacher Monitoring"
           description="A system that tracts activity of teachers and Student that monitors Screen activity for more info kindly contact me if you are interested."
+=======
+          src="/CardImage.png"
+          title="Project EclipSys"
+          description="A Monitoring tool that built in c++  and react js in web where users can see the monitors of employees ."
+          url=""
+>>>>>>> feature/David/NewResetBranch
         />
         {/* <ProjectCard
           src="/SpaceWebsite.png"
           title="Trading Prediction Tool"
           description="this tool will be used by the stock traders or cryto traders that needed an accurate information."
+<<<<<<< HEAD
         /> */}
+=======
+          url=""
+        />
+>>>>>>> feature/David/NewResetBranch
       </div>
     </div>
   );
