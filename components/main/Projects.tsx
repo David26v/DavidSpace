@@ -15,10 +15,10 @@ const Projects = () => {
           url=""
         />
         <ProjectCard
-          src="/Student_monitoring.png"
-          title="Student Teacher Monitoring"
-          description="A system that tracks the activity of teachers and students, monitoring screen usage."
-          url=""
+          src="Central-hub.png"
+          title="Central Hub"
+          description="A system that has feature of chat,email call and sms for later it will become payroll system that are belong to ZenithOs Suite that iam currently working on ."
+          url="https://centralhub-seven.vercel.app/"
         />
         <ProjectCard
           src="/multi-activity.png"
