@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { slideInFromTop } from "@/utils/motion";
 import Image from "next/image";
+import Link from "next/link";
 
 const Encryption = () => {
   return (
@@ -23,7 +24,11 @@ const Encryption = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center translate-y-[-50px] absolute z-[20] w-auto h-auto">
-        <div className="flex flex-col items-center group cursor-pointer w-auto h-auto">
+        <Link
+          href="/security"
+          className="flex flex-col items-center group cursor-pointer w-auto h-auto"
+          aria-label="Learn how I handle performance and security"
+        >
           <Image
             src="/LockTop.png"
             alt="Lock top"
@@ -38,7 +43,7 @@ const Encryption = () => {
             height={70}
             className=" z-10"
           />
-        </div>
+        </Link>
 
         <div className="Welcome-box px-[15px] py-[4px] z-[20] brder my-[20px] border-[#7042f88b] opacity-[0.9]">
           <h1 className="Welcome-text text-[12px]">Encryption</h1>
