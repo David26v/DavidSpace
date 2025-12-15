@@ -127,7 +127,7 @@ export const Skill_data = [
       height: 80,
     },
     {
-      skill_name: "Next js 13",
+      skill_name: "Next js 15",
       Image: "/next.png",
       width: 80,
       height: 80,
@@ -185,9 +185,11 @@ export const Skill_data = [
    
 
 export const nav_links = [
-  { name: "Home", section: "about-me" },
-  { name: "Skills", section: "skills" },
+  { name: "Home", section: "home" },
+  { name: "About", section: "about-me" },
+  { name: "Freelance", section: "freelance" },
   { name: "Projects", section: "projects" },
+  { name: "Contact", section: "contact-page", route: "/contact" },
 ];
 
     
