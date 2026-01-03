@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
 
@@ -48,7 +49,7 @@ const contactInfo = [
 const socialLinks = [
   {
     name: "GitHub",
-    href: "https://github.com/davidfajardo26", // Update with your actual GitHub
+    href: "https://github.com",
     icon: (
       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
@@ -57,7 +58,7 @@ const socialLinks = [
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/in/david-fajardo", // Update with your actual LinkedIn
+    href: "https://www.linkedin.com",
     icon: (
       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -84,8 +85,27 @@ const socialLinks = [
   },
 ];
 
-// Calendly Modal Component
-const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
+const timeSlots = [
+  "09:00 AM",
+  "10:00 AM",
+  "11:00 AM",
+  "01:00 PM",
+  "02:00 PM",
+  "03:00 PM",
+  "04:00 PM",
+  "05:00 PM",
+];
+
+// Schedule Modal Component
+const ScheduleModal = ({ onClose }: { onClose: () => void }) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [topic, setTopic] = useState("");
+  const [step, setStep] = useState(1);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -96,23 +116,49 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
   useEffect(() => {
     document.addEventListener("keydown", handleEscape);
     document.body.style.overflow = "hidden";
-
-    // Load Calendly widget script
-    const script = document.createElement("script");
-    script.src = "https://assets.calendly.com/assets/external/widget.js";
-    script.async = true;
-    document.body.appendChild(script);
-
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "auto";
-      // Clean up script
-      const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
     };
   }, [handleEscape]);
+
+  // Generate next 14 days
+  const getAvailableDates = () => {
+    const dates = [];
+    const today = new Date();
+    for (let i = 1; i <= 14; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      // Skip weekends
+      if (date.getDay() !== 0 && date.getDay() !== 6) {
+        dates.push(date);
+      }
+    }
+    return dates;
+  };
+
+  const availableDates = getAvailableDates();
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically send the booking to your backend
+    console.log({
+      date: selectedDate,
+      time: selectedTime,
+      name,
+      email,
+      topic,
+    });
+    setIsSubmitted(true);
+  };
 
   return (
     <div
@@ -121,7 +167,7 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
       style={{ animation: "fadeIn 0.2s ease-out forwards" }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/90 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-black/85 backdrop-blur-md" />
 
       {/* Close button */}
       <button
@@ -141,7 +187,7 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
       {/* Modal Content */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-4xl h-[85vh] bg-[#0c0f1a] rounded-2xl overflow-hidden"
+        className="relative w-full max-w-2xl max-h-[90vh] bg-[#0c0f1a] rounded-2xl overflow-hidden flex flex-col"
         style={{
           animation: "scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
           boxShadow: "0 25px 80px -12px rgba(112, 66, 248, 0.3)",
@@ -150,39 +196,231 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
       >
         {/* Header */}
         <div
-          className="p-4 md:p-6 flex items-center gap-4"
+          className="p-6 md:p-8"
           style={{
             background: "linear-gradient(135deg, rgba(112, 66, 248, 0.15) 0%, rgba(112, 66, 248, 0.05) 100%)",
             borderBottom: "1px solid rgba(112, 66, 248, 0.2)",
           }}
         >
-          <div
-            className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7042f8] to-[#b49bff] flex items-center justify-center"
-            style={{ boxShadow: "0 8px 30px rgba(112, 66, 248, 0.4)" }}
-          >
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+          <div className="flex items-center gap-4">
+            <div
+              className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#7042f8] to-[#b49bff] flex items-center justify-center"
+              style={{ boxShadow: "0 8px 30px rgba(112, 66, 248, 0.4)" }}
+            >
+              <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white">Schedule a Call</h2>
+              <p className="text-gray-400 text-sm">Book a 30-minute discovery call</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-white">Schedule a Call</h2>
-            <p className="text-gray-400 text-sm">Pick a time that works for you</p>
-          </div>
+
+          {/* Progress Steps */}
+          {!isSubmitted && (
+            <div className="flex items-center gap-2 mt-6">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className="flex items-center gap-2">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+                      step >= s
+                        ? "bg-[#7042f8] text-white"
+                        : "bg-[#1a1f35] text-gray-500"
+                    }`}
+                  >
+                    {step > s ? (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      s
+                    )}
+                  </div>
+                  {s < 3 && (
+                    <div
+                      className={`w-12 h-0.5 transition-all duration-300 ${
+                        step > s ? "bg-[#7042f8]" : "bg-[#1a1f35]"
+                      }`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Calendly Embed */}
-        <div className="h-[calc(85vh-88px)] overflow-hidden">
-          {/* 
-            IMPORTANT: Replace 'YOUR_CALENDLY_USERNAME' with your actual Calendly username
-            Example: If your Calendly URL is https://calendly.com/david-fajardo
-            Then use: https://calendly.com/david-fajardo/30min
-          */}
-          <div
-            className="calendly-inline-widget w-full h-full"
-            data-url="https://calendly.com/david-fajardo26v/30min?hide_gdpr_banner=1&background_color=0c0f1a&text_color=ffffff&primary_color=7042f8"
-            style={{ minWidth: "320px", height: "100%" }}
-          />
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+          {isSubmitted ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div
+                className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7042f8] to-[#b49bff] flex items-center justify-center mb-6"
+                style={{ boxShadow: "0 8px 30px rgba(112, 66, 248, 0.4)" }}
+              >
+                <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Meeting Scheduled!</h3>
+              <p className="text-gray-400 mb-4">
+                Your call has been booked for{" "}
+                <span className="text-[#b49bff] font-medium">
+                  {selectedDate && formatDate(selectedDate)} at {selectedTime}
+                </span>
+              </p>
+              <p className="text-gray-500 text-sm mb-6">
+                You&apos;ll receive a confirmation email at <span className="text-white">{email}</span> with the meeting details.
+              </p>
+              <button
+                onClick={onClose}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#7042f8] to-[#b49bff] text-white font-medium hover:opacity-90 transition-opacity"
+              >
+                Done
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              {/* Step 1: Select Date */}
+              {step === 1 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white mb-4">Select a Date</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {availableDates.map((date, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSelectedDate(date)}
+                        className={`p-4 rounded-xl border text-left transition-all duration-300 ${
+                          selectedDate?.toDateString() === date.toDateString()
+                            ? "border-[#7042f8] bg-[#7042f8]/20 text-white"
+                            : "border-[#2A0E61]/50 bg-[#0f1220] text-gray-300 hover:border-[#7042f8]/50"
+                        }`}
+                      >
+                        <span className="block text-xs text-gray-500 uppercase">
+                          {date.toLocaleDateString("en-US", { weekday: "short" })}
+                        </span>
+                        <span className="block text-lg font-semibold">
+                          {date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Select Time */}
+              {step === 2 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white mb-2">Select a Time</h3>
+                  <p className="text-gray-500 text-sm mb-4">
+                    {selectedDate && formatDate(selectedDate)} • Philippine Standard Time (PST)
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {timeSlots.map((time) => (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => setSelectedTime(time)}
+                        className={`p-3 rounded-xl border text-center transition-all duration-300 ${
+                          selectedTime === time
+                            ? "border-[#7042f8] bg-[#7042f8]/20 text-white"
+                            : "border-[#2A0E61]/50 bg-[#0f1220] text-gray-300 hover:border-[#7042f8]/50"
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Your Details */}
+              {step === 3 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white mb-4">Your Details</h3>
+                  <div className="space-y-4">
+                    <label className="flex flex-col gap-2 text-sm text-gray-200">
+                      Name
+                      <input
+                        required
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white focus:outline-none focus:border-[#7042f8] transition-colors"
+                        placeholder="Your full name"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2 text-sm text-gray-200">
+                      Email
+                      <input
+                        required
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white focus:outline-none focus:border-[#7042f8] transition-colors"
+                        placeholder="your@email.com"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2 text-sm text-gray-200">
+                      What would you like to discuss?
+                      <textarea
+                        required
+                        value={topic}
+                        onChange={(e) => setTopic(e.target.value)}
+                        rows={3}
+                        className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white focus:outline-none focus:border-[#7042f8] transition-colors resize-none"
+                        placeholder="Brief description of your project or question..."
+                      />
+                    </label>
+                  </div>
+                </div>
+              )}
+            </form>
+          )}
         </div>
+
+        {/* Footer */}
+        {!isSubmitted && (
+          <div
+            className="p-4 md:p-6 flex items-center justify-between gap-4"
+            style={{
+              background: "#080a10",
+              borderTop: "1px solid rgba(112, 66, 248, 0.15)",
+            }}
+          >
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={() => setStep(step - 1)}
+                className="px-4 py-2 rounded-lg text-gray-400 hover:text-white transition-colors"
+              >
+                ← Back
+              </button>
+            ) : (
+              <div />
+            )}
+            {step < 3 ? (
+              <button
+                type="button"
+                onClick={() => setStep(step + 1)}
+                disabled={(step === 1 && !selectedDate) || (step === 2 && !selectedTime)}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#7042f8] to-[#b49bff] text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue →
+              </button>
+            ) : (
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={!name || !email || !topic}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#7042f8] to-[#b49bff] text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Confirm Booking
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Animation Styles */}
@@ -192,8 +430,8 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
           to { opacity: 1; }
         }
         @keyframes scaleIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
+          from { opacity: 0; transform: scale(0.9) translateY(20px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
         }
       `}</style>
     </div>
@@ -201,24 +439,7 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
 };
 
 export default function ContactPage() {
-  const [showCalendly, setShowCalendly] = useState(false);
-  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setFormStatus("loading");
-
-    // Simulate form submission - Replace with actual API call
-    // You can use EmailJS, Resend, or your own backend
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setFormStatus("success");
-      // Reset form
-      (e.target as HTMLFormElement).reset();
-    } catch {
-      setFormStatus("error");
-    }
-  };
+  const [showScheduler, setShowScheduler] = useState(false);
 
   return (
     <main className="min-h-screen bg-[#030014] text-white pt-28 pb-16 px-6">
@@ -284,10 +505,10 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Schedule a Call Card - Calendly */}
+            {/* Schedule a Call Card */}
             <div
               className="rounded-2xl border border-[#7042f8]/30 bg-gradient-to-br from-[#7042f8]/10 to-[#0c0f1a] p-6 md:p-8 cursor-pointer group hover:border-[#7042f8]/50 transition-all duration-300"
-              onClick={() => setShowCalendly(true)}
+              onClick={() => setShowScheduler(true)}
             >
               <div className="flex items-start gap-4">
                 <div
@@ -306,7 +527,7 @@ export default function ContactPage() {
                     Book a free 30-minute discovery call to discuss your project, goals, and how I can help bring your vision to life.
                   </p>
                   <div className="inline-flex items-center gap-2 text-[#b49bff] text-sm font-medium">
-                    Schedule with Calendly
+                    Schedule a call
                     <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -314,37 +535,6 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-
-            {/* Store Card - Buy Products */}
-            <Link
-              href="/store"
-              className="block rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 p-6 md:p-8 group hover:border-[#7042f8]/50 transition-all duration-300"
-            >
-              <div className="flex items-start gap-4">
-                <div
-                  className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#f97316] to-[#facc15] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"
-                  style={{ boxShadow: "0 8px 30px rgba(249, 115, 22, 0.3)" }}
-                >
-                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-[#b49bff] transition-colors">
-                    Looking for templates?
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4">
-                    Browse my collection of premium dashboard templates, UI kits, and starter kits. Production-ready and well-documented.
-                  </p>
-                  <div className="inline-flex items-center gap-2 text-[#f97316] text-sm font-medium group-hover:text-[#facc15] transition-colors">
-                    Visit Store
-                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </Link>
 
             {/* Availability Status */}
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#0f1220]/80 border border-[#2A0E61]/30">
@@ -359,56 +549,29 @@ export default function ContactPage() {
           </div>
 
           {/* Right Side - Contact Form */}
-          <form 
-            onSubmit={handleSubmit}
-            className="rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur p-6 md:p-8 space-y-6"
-          >
+          <form className="rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur p-6 md:p-8 space-y-6">
             <h2 className="text-xl font-semibold text-white mb-2">Send a Message</h2>
             <p className="text-gray-400 text-sm mb-6">
               Fill out the form below and I&apos;ll get back to you within one business day.
             </p>
-
-            {/* Success Message */}
-            {formStatus === "success" && (
-              <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center gap-3">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <p className="text-green-400 text-sm">Message sent successfully! I&apos;ll get back to you soon.</p>
-              </div>
-            )}
-
-            {/* Error Message */}
-            {formStatus === "error" && (
-              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-3">
-                <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <p className="text-red-400 text-sm">Something went wrong. Please try again or email me directly.</p>
-              </div>
-            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="flex flex-col gap-2 text-sm text-gray-200">
                 Name
                 <input
                   required
-                  name="name"
                   type="text"
                   className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#7042f8] transition-colors"
                   placeholder="Your name"
-                  disabled={formStatus === "loading"}
                 />
               </label>
               <label className="flex flex-col gap-2 text-sm text-gray-200">
                 Email
                 <input
                   required
-                  name="email"
                   type="email"
                   className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#7042f8] transition-colors"
                   placeholder="your@email.com"
-                  disabled={formStatus === "loading"}
                 />
               </label>
             </div>
@@ -417,10 +580,8 @@ export default function ContactPage() {
               What can I help with?
               <select
                 required
-                name="reason"
                 className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white focus:outline-none focus:border-[#7042f8] transition-colors"
                 defaultValue=""
-                disabled={formStatus === "loading"}
               >
                 <option value="" disabled>
                   Select an option
@@ -437,31 +598,18 @@ export default function ContactPage() {
               Message
               <textarea
                 required
-                name="message"
                 rows={5}
                 className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#7042f8] transition-colors resize-none"
                 placeholder="Tell me about your project, timeline, and any specific requirements..."
-                disabled={formStatus === "loading"}
               />
             </label>
 
             <button
               type="submit"
-              disabled={formStatus === "loading"}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#7042f8] to-[#b49bff] text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#7042f8] to-[#b49bff] text-white font-semibold hover:opacity-90 transition-opacity"
               style={{ boxShadow: "0 4px 20px rgba(112, 66, 248, 0.3)" }}
             >
-              {formStatus === "loading" ? (
-                <>
-                  <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Sending...
-                </>
-              ) : (
-                "Send Message"
-              )}
+              Send Message
             </button>
 
             <p className="text-xs text-gray-500 text-center">
@@ -484,8 +632,8 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Calendly Modal */}
-      {showCalendly && <CalendlyModal onClose={() => setShowCalendly(false)} />}
+      {/* Schedule Modal */}
+      {showScheduler && <ScheduleModal onClose={() => setShowScheduler(false)} />}
     </main>
   );
 }

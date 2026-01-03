@@ -187,7 +187,7 @@ export const Skill_data = [
 export const nav_links = [
   { name: "Home", section: "home" },
   { name: "About", section: "about-me" },
-  { name: "Freelance", section: "freelance" },
+  { name: "Experience", section: "experience" },
   { name: "Projects", section: "projects" },
   { name: "Contact", section: "contact-page", route: "/contact" },
 ];
