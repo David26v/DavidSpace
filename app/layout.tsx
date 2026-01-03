@@ -106,8 +106,7 @@ export const metadata: Metadata = {
 
   // Verification (add your verification codes)
   verification: {
-    google: "your-google-verification-code", // Get from Google Search Console
-
+    google: "lB_JOawyvW4AZ88lXaHszxq493_pQO5xEbvcAQ3CdBA", 
   },
 
   // Canonical URL
@@ -127,7 +126,7 @@ export const metadata: Metadata = {
 
   // Other
   other: {
-    "google-site-verification": "your-google-verification-code",
+    "google-site-verification": "lB_JOawyvW4AZ88lXaHszxq493_pQO5xEbvcAQ3CdBA",
   },
 };
 
