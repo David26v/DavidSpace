@@ -1,5 +1,6 @@
 "use client";
 
+import Toast, { useToast } from "@/components/sub/Toast";
 import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
 
@@ -48,7 +49,7 @@ const contactInfo = [
 const socialLinks = [
   {
     name: "GitHub",
-    href: "https://github.com/davidfajardo26", // Update with your actual GitHub
+    href: "https://github.com/davidfajardo26",
     icon: (
       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
@@ -57,7 +58,7 @@ const socialLinks = [
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/in/david-fajardo", // Update with your actual LinkedIn
+    href: "https://www.linkedin.com/in/david-fajardo",
     icon: (
       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -97,7 +98,6 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
     document.addEventListener("keydown", handleEscape);
     document.body.style.overflow = "hidden";
 
-    // Load Calendly widget script
     const script = document.createElement("script");
     script.src = "https://assets.calendly.com/assets/external/widget.js";
     script.async = true;
@@ -106,7 +106,6 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "auto";
-      // Clean up script
       const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
       if (existingScript) {
         existingScript.remove();
@@ -120,10 +119,8 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
       style={{ animation: "fadeIn 0.2s ease-out forwards" }}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/90 backdrop-blur-md" />
 
-      {/* Close button */}
       <button
         onClick={onClose}
         className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-200 group"
@@ -138,7 +135,6 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
         </svg>
       </button>
 
-      {/* Modal Content */}
       <div
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-4xl h-[85vh] bg-[#0c0f1a] rounded-2xl overflow-hidden"
@@ -148,7 +144,6 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
           border: "1px solid rgba(112, 66, 248, 0.2)",
         }}
       >
-        {/* Header */}
         <div
           className="p-4 md:p-6 flex items-center gap-4"
           style={{
@@ -170,13 +165,7 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
 
-        {/* Calendly Embed */}
         <div className="h-[calc(85vh-88px)] overflow-hidden">
-          {/* 
-            IMPORTANT: Replace 'YOUR_CALENDLY_USERNAME' with your actual Calendly username
-            Example: If your Calendly URL is https://calendly.com/david-fajardo
-            Then use: https://calendly.com/david-fajardo/30min
-          */}
           <div
             className="calendly-inline-widget w-full h-full"
             data-url="https://calendly.com/david-fajardo26v/30min?hide_gdpr_banner=1&background_color=0c0f1a&text_color=ffffff&primary_color=7042f8"
@@ -185,7 +174,6 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
         </div>
       </div>
 
-      {/* Animation Styles */}
       <style jsx global>{`
         @keyframes fadeIn {
           from { opacity: 0; }
@@ -202,26 +190,67 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
 
 export default function ContactPage() {
   const [showCalendly, setShowCalendly] = useState(false);
-  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast, success, error, hideToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setFormStatus("loading");
+    setIsSubmitting(true);
 
-    // Simulate form submission - Replace with actual API call
-    // You can use EmailJS, Resend, or your own backend
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      reason: formData.get("reason") as string,
+      message: formData.get("message") as string,
+    };
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setFormStatus("success");
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send message");
+      }
+
+      // Show success toast
+      success(
+        "Message Sent Successfully! 🎉",
+        "Thank you for reaching out! I'll get back to you within one business day."
+      );
+      
       // Reset form
       (e.target as HTMLFormElement).reset();
-    } catch {
-      setFormStatus("error");
+    } catch (err) {
+      // Show error toast
+      error(
+        "Failed to Send Message",
+        err instanceof Error ? err.message : "Something went wrong. Please try again or email me directly."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <main className="min-h-screen bg-[#030014] text-white pt-28 pb-16 px-6">
+      {/* Toast Notification */}
+      <Toast
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+        duration={5000}
+      />
+
       <section className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="space-y-4 text-center">
@@ -368,26 +397,6 @@ export default function ContactPage() {
               Fill out the form below and I&apos;ll get back to you within one business day.
             </p>
 
-            {/* Success Message */}
-            {formStatus === "success" && (
-              <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center gap-3">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <p className="text-green-400 text-sm">Message sent successfully! I&apos;ll get back to you soon.</p>
-              </div>
-            )}
-
-            {/* Error Message */}
-            {formStatus === "error" && (
-              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-3">
-                <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <p className="text-red-400 text-sm">Something went wrong. Please try again or email me directly.</p>
-              </div>
-            )}
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="flex flex-col gap-2 text-sm text-gray-200">
                 Name
@@ -395,9 +404,10 @@ export default function ContactPage() {
                   required
                   name="name"
                   type="text"
+                  maxLength={100}
                   className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#7042f8] transition-colors"
                   placeholder="Your name"
-                  disabled={formStatus === "loading"}
+                  disabled={isSubmitting}
                 />
               </label>
               <label className="flex flex-col gap-2 text-sm text-gray-200">
@@ -406,9 +416,10 @@ export default function ContactPage() {
                   required
                   name="email"
                   type="email"
+                  maxLength={100}
                   className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#7042f8] transition-colors"
                   placeholder="your@email.com"
-                  disabled={formStatus === "loading"}
+                  disabled={isSubmitting}
                 />
               </label>
             </div>
@@ -420,7 +431,7 @@ export default function ContactPage() {
                 name="reason"
                 className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white focus:outline-none focus:border-[#7042f8] transition-colors"
                 defaultValue=""
-                disabled={formStatus === "loading"}
+                disabled={isSubmitting}
               >
                 <option value="" disabled>
                   Select an option
@@ -439,19 +450,20 @@ export default function ContactPage() {
                 required
                 name="message"
                 rows={5}
+                maxLength={5000}
                 className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#7042f8] transition-colors resize-none"
                 placeholder="Tell me about your project, timeline, and any specific requirements..."
-                disabled={formStatus === "loading"}
+                disabled={isSubmitting}
               />
             </label>
 
             <button
               type="submit"
-              disabled={formStatus === "loading"}
+              disabled={isSubmitting}
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#7042f8] to-[#b49bff] text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{ boxShadow: "0 4px 20px rgba(112, 66, 248, 0.3)" }}
             >
-              {formStatus === "loading" ? (
+              {isSubmitting ? (
                 <>
                   <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
