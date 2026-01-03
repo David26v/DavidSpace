@@ -3,10 +3,8 @@ import Hero from "@/components/main/Hero";
 import About from "@/components/main/About";
 import Projects from "@/components/main/Projects";
 import Skills from "@/components/main/Skills";
-import Services from "@/components/main/Services";
 import StarsCanvas from "@/components/main/StarBackgroundClient";
 import Experience from "@/components/main/Experience";
-import ContactPage from "@/components/main/Contact";
 
 export default function Home() {
   return (
