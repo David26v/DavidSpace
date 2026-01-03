@@ -2,7 +2,7 @@
 
 import Toast, { useToast } from "@/components/sub/Toast";
 import Link from "next/link";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 const contactReasons = [
   { value: "project", label: "Project inquiry" },
@@ -84,6 +84,58 @@ const socialLinks = [
     ),
   },
 ];
+
+// Allowed file types and max size
+const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/plain",
+  "application/zip",
+  "application/x-rar-compressed",
+];
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
+const MAX_TOTAL_SIZE = 25 * 1024 * 1024; // 25MB total
+const MAX_FILES = 5;
+
+// File type icons
+const getFileIcon = (type: string) => {
+  if (type.startsWith("image/")) {
+    return (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    );
+  }
+  if (type === "application/pdf") {
+    return (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  );
+};
+
+// Format file size
+const formatFileSize = (bytes: number) => {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+};
 
 // Calendly Modal Component
 const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
@@ -191,27 +243,97 @@ const CalendlyModal = ({ onClose }: { onClose: () => void }) => {
 export default function ContactPage() {
   const [showCalendly, setShowCalendly] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast, success, error, hideToast } = useToast();
+  const [files, setFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast, success, error, warning, hideToast } = useToast();
+
+  // Handle file selection
+  const handleFileSelect = (selectedFiles: FileList | null) => {
+    if (!selectedFiles) return;
+
+    const newFiles: File[] = [];
+    let totalSize = files.reduce((acc, f) => acc + f.size, 0);
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+
+      // Check file count
+      if (files.length + newFiles.length >= MAX_FILES) {
+        warning("File Limit Reached", `You can only attach up to ${MAX_FILES} files.`);
+        break;
+      }
+
+      // Check file type
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        warning("Invalid File Type", `"${file.name}" is not a supported file type.`);
+        continue;
+      }
+
+      // Check individual file size
+      if (file.size > MAX_FILE_SIZE) {
+        warning("File Too Large", `"${file.name}" exceeds the 10MB limit.`);
+        continue;
+      }
+
+      // Check total size
+      if (totalSize + file.size > MAX_TOTAL_SIZE) {
+        warning("Total Size Exceeded", "Total attachments cannot exceed 25MB.");
+        break;
+      }
+
+      // Check for duplicates
+      if (files.some((f) => f.name === file.name && f.size === file.size)) {
+        continue;
+      }
+
+      newFiles.push(file);
+      totalSize += file.size;
+    }
+
+    if (newFiles.length > 0) {
+      setFiles((prev) => [...prev, ...newFiles]);
+    }
+  };
+
+  // Remove file
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFileSelect(e.dataTransfer.files);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      reason: formData.get("reason") as string,
-      message: formData.get("message") as string,
-    };
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+
+    // Add files to FormData
+    files.forEach((file) => {
+      formData.append("attachments", file);
+    });
 
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       const result = await response.json();
@@ -220,19 +342,18 @@ export default function ContactPage() {
         throw new Error(result.error || "Failed to send message");
       }
 
-      // Show success toast
       success(
         "Message Sent Successfully! 🎉",
         "Thank you for reaching out! I'll get back to you within one business day."
       );
-      
-      // Reset form
-      (e.target as HTMLFormElement).reset();
+
+      // Reset form and files
+      formElement.reset();
+      setFiles([]);
     } catch (err) {
-      // Show error toast
       error(
         "Failed to Send Message",
-        err instanceof Error ? err.message : "Something went wrong. Please try again or email me directly."
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -254,9 +375,7 @@ export default function ContactPage() {
       <section className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="space-y-4 text-center">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#b49bff]">
-            Contact
-          </p>
+          <p className="text-sm uppercase tracking-[0.2em] text-[#b49bff]">Contact</p>
           <h1 className="text-4xl md:text-5xl font-semibold">Let&apos;s Connect</h1>
           <p className="text-gray-300 max-w-2xl mx-auto">
             Have a project in mind or want to discuss opportunities? I&apos;m always open to new ideas and collaborations. Let&apos;s create something amazing together.
@@ -269,7 +388,7 @@ export default function ContactPage() {
             {/* Contact Info Card */}
             <div className="rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur p-6 md:p-8">
               <h2 className="text-xl font-semibold text-white mb-6">Contact Information</h2>
-              
+
               <div className="space-y-5">
                 {contactInfo.map((info, idx) => (
                   <div key={idx} className="flex items-start gap-4 group">
@@ -279,10 +398,7 @@ export default function ContactPage() {
                     <div>
                       <p className="text-sm text-gray-500 mb-1">{info.label}</p>
                       {info.href ? (
-                        <a
-                          href={info.href}
-                          className="text-white hover:text-[#b49bff] transition-colors"
-                        >
+                        <a href={info.href} className="text-white hover:text-[#b49bff] transition-colors">
                           {info.value}
                         </a>
                       ) : (
@@ -313,7 +429,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Schedule a Call Card - Calendly */}
+            {/* Schedule a Call Card */}
             <div
               className="rounded-2xl border border-[#7042f8]/30 bg-gradient-to-br from-[#7042f8]/10 to-[#0c0f1a] p-6 md:p-8 cursor-pointer group hover:border-[#7042f8]/50 transition-all duration-300"
               onClick={() => setShowCalendly(true)}
@@ -332,7 +448,7 @@ export default function ContactPage() {
                     Ready to discuss?
                   </h3>
                   <p className="text-gray-400 text-sm mb-4">
-                    Book a free 30-minute discovery call to discuss your project, goals, and how I can help bring your vision to life.
+                    Book a free 30-minute discovery call to discuss your project, goals, and how I can help.
                   </p>
                   <div className="inline-flex items-center gap-2 text-[#b49bff] text-sm font-medium">
                     Schedule with Calendly
@@ -344,8 +460,8 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Store Card - Buy Products */}
-            <Link
+            {/* Store Card */}
+            {/* <Link
               href="/store"
               className="block rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 p-6 md:p-8 group hover:border-[#7042f8]/50 transition-all duration-300"
             >
@@ -363,7 +479,7 @@ export default function ContactPage() {
                     Looking for templates?
                   </h3>
                   <p className="text-gray-400 text-sm mb-4">
-                    Browse my collection of premium dashboard templates, UI kits, and starter kits. Production-ready and well-documented.
+                    Browse my collection of premium dashboard templates, UI kits, and starter kits.
                   </p>
                   <div className="inline-flex items-center gap-2 text-[#f97316] text-sm font-medium group-hover:text-[#facc15] transition-colors">
                     Visit Store
@@ -373,7 +489,7 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-            </Link>
+            </Link> */}
 
             {/* Availability Status */}
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#0f1220]/80 border border-[#2A0E61]/30">
@@ -381,14 +497,12 @@ export default function ContactPage() {
                 <div className="w-3 h-3 rounded-full bg-green-500" />
                 <div className="absolute inset-0 w-3 h-3 rounded-full bg-green-500 animate-ping opacity-75" />
               </div>
-              <span className="text-sm text-gray-300">
-                Currently available for new projects
-              </span>
+              <span className="text-sm text-gray-300">Currently available for new projects</span>
             </div>
           </div>
 
           {/* Right Side - Contact Form */}
-          <form 
+          <form
             onSubmit={handleSubmit}
             className="rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur p-6 md:p-8 space-y-6"
           >
@@ -449,13 +563,121 @@ export default function ContactPage() {
               <textarea
                 required
                 name="message"
-                rows={5}
+                rows={4}
                 maxLength={5000}
                 className="rounded-xl bg-[#0f1220] border border-[#2A0E61]/50 px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#7042f8] transition-colors resize-none"
                 placeholder="Tell me about your project, timeline, and any specific requirements..."
                 disabled={isSubmitting}
               />
             </label>
+
+            {/* File Upload Section */}
+            <div className="space-y-3">
+              <label className="text-sm text-gray-200">
+                Attachments <span className="text-gray-500">(optional)</span>
+              </label>
+
+              {/* Drop Zone */}
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`
+                  relative rounded-xl border-2 border-dashed p-6 text-center cursor-pointer
+                  transition-all duration-300
+                  ${isDragging
+                    ? "border-[#7042f8] bg-[#7042f8]/10"
+                    : "border-[#2A0E61]/50 bg-[#0f1220]/50 hover:border-[#7042f8]/50 hover:bg-[#0f1220]"
+                  }
+                  ${isSubmitting ? "opacity-50 pointer-events-none" : ""}
+                `}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept={ALLOWED_FILE_TYPES.join(",")}
+                  onChange={(e) => handleFileSelect(e.target.files)}
+                  className="hidden"
+                  disabled={isSubmitting}
+                />
+
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className={`
+                      w-12 h-12 rounded-xl flex items-center justify-center
+                      ${isDragging ? "bg-[#7042f8]/20 text-[#b49bff]" : "bg-[#7042f8]/10 text-[#7042f8]"}
+                    `}
+                  >
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-gray-300 text-sm">
+                      <span className="text-[#b49bff] font-medium">Click to upload</span> or drag and drop
+                    </p>
+                    <p className="text-gray-500 text-xs mt-1">
+                      PNG, JPG, PDF, DOC, XLS, ZIP up to 10MB each (max 5 files, 25MB total)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* File List */}
+              {files.length > 0 && (
+                <div className="space-y-2">
+                  {files.map((file, index) => (
+                    <div
+                      key={`${file.name}-${index}`}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-[#0f1220] border border-[#2A0E61]/30 group"
+                    >
+                      {/* File Preview / Icon */}
+                      {file.type.startsWith("image/") ? (
+                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#7042f8]/10 flex-shrink-0">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-[#7042f8]/10 flex items-center justify-center text-[#b49bff] flex-shrink-0">
+                          {getFileIcon(file.type)}
+                        </div>
+                      )}
+
+                      {/* File Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-white truncate">{file.name}</p>
+                        <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                      </div>
+
+                      {/* Remove Button */}
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        disabled={isSubmitting}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Total Size */}
+                  <div className="flex justify-between items-center text-xs text-gray-500 px-1">
+                    <span>{files.length} file{files.length !== 1 ? "s" : ""} attached</span>
+                    <span>
+                      Total: {formatFileSize(files.reduce((acc, f) => acc + f.size, 0))} / 25MB
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <button
               type="submit"
@@ -472,7 +694,12 @@ export default function ContactPage() {
                   Sending...
                 </>
               ) : (
-                "Send Message"
+                <>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                  Send Message
+                </>
               )}
             </button>
 
