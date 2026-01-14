@@ -1013,6 +1013,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "2025-03-15",
     tags: ["Stripe", "Payments", "API", "Testing", "Production", "E-commerce"],
     readingTimeMinutes: 18,
+    coverImage: "/blogs/stripe_payment_integration.png",
     content: [
       {
         type: "p",
