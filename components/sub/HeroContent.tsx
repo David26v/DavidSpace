@@ -65,7 +65,7 @@ const HeroContent = () => {
             Download Resume
           </a>
           <a
-            href="mailto:david.fajardo26v@gmail.com"
+            href="/contact"
             className="py-2 px-6 border border-[#7042f88b] text-white rounded-lg hover:bg-[#7042f81a] transition"
           >
             Contact Me

@@ -50,6 +50,8 @@ const cards: Card[] = [
       { name: "PostgreSQL 16", icon: "/postger.png" },
       { name: "PostgreSQL 17", icon: "/postger.png" },
       { name: "Supabase", icon: "/supabase.webp" },
+      { name: "MySQL", icon: "/mysql.png" },
+      { name: "MongoDB", icon: "/mongodb.png" },
     ],
   },
   {
@@ -466,18 +468,13 @@ const SkillCard = ({
       {/* Content */}
       <div className="p-4 sm:p-5 flex flex-col gap-3 sm:gap-4">
         {/* Title row */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform duration-300">
-            {card.icon}
-          </span>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-base sm:text-lg font-semibold text-white group-hover:text-[#b49bff] transition-colors duration-300 truncate">
-              {card.title}
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-400 line-clamp-1">
-              {card.description}
-            </p>
-          </div>
+        <div>
+          <h3 className="text-base sm:text-lg font-semibold text-white group-hover:text-[#b49bff] transition-colors duration-300 truncate">
+            {card.title}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-400 line-clamp-1">
+            {card.description}
+          </p>
         </div>
 
         {/* Skills preview */}

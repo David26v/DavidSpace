@@ -461,16 +461,16 @@ export default function SecurityPage() {
               "Learn about enterprise-grade security practices and performance optimization techniques for modern web applications.",
             author: {
               "@type": "Person",
-              name: "David Fajardo",
-              url: "https://david-space--gules.vercel.app",
+              name: "David R. Fajardo",
+              url: "https://www.davidfajardo.space",
             },
             publisher: {
               "@type": "Person",
-              name: "David Fajardo",
+              name: "David R. Fajardo",
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": "https://david-space--gules.vercel.app/security",
+              "@id": "https://www.davidfajardo.space/security",
             },
             keywords: [
               "web security",

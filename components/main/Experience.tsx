@@ -22,7 +22,7 @@ const professionalExperience: Experience[] = [
         role: "Software Engineer",
         company: "Rooche Digital",
         companyLogo: "/companies/rooche-digital.png",
-        date: "Jan 2025 – Present",
+        date: "Feb 2025 – Present",
         location: "Remote",
         type: "Part-Time",
         companyDescription: "A digital agency specializing in modern web solutions, helping businesses establish and grow their online presence through cutting-edge technology.",

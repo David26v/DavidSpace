@@ -5,6 +5,7 @@ import Projects from "@/components/main/Projects";
 import Skills from "@/components/main/Skills";
 import StarsCanvas from "@/components/main/StarBackgroundClient";
 import Experience from "@/components/main/Experience";
+import Blogs from "@/components/main/Blogs";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
         <Experience/>
         <Encryption />
         <Projects />  
+        <Blogs />
       </div>
     </main>
   );

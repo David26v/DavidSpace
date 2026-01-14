@@ -69,14 +69,9 @@ export const Skill_data = [
       link: "https://discord.com" 
     },
     {
-      name: "Facebook",
-      src: "/facebook.svg",
-      link: "https://www.facebook.com/LeL0uCh26/"
-    },
-    {
       name: "Instagram",
       src: "/instagram.svg",
-      link: "https://www.instagram.com/chinitz_david26/"  
+      link: "https://www.instagram.com/vid_26.fajardo/"  
     },
   ];
   
@@ -172,6 +167,12 @@ export const Skill_data = [
       height: 70,
     },
     {
+      skill_name: "Lynx Framework",
+      Image: "/LynxFramework.png",
+      width: 70,
+      height: 70,
+    },
+    {
       skill_name: "Figma",
       Image: "/figma.png",
       width: 50,
@@ -189,6 +190,7 @@ export const nav_links = [
   { name: "About", section: "about-me" },
   { name: "Experience", section: "experience" },
   { name: "Projects", section: "projects" },
+  { name: "Blog", section: "blog", route: "/blog" },
   { name: "Contact", section: "contact-page", route: "/contact" },
 ];
 

@@ -49,11 +49,58 @@ const About = () => {
     },
   ];
 
+  const techStack = [
+    "Next.js",
+    "React",
+    "React Native",
+    "Lynx Framework",
+    "TypeScript",
+    "Node.js",
+    "PostgreSQL",
+    "MySQL",
+    "MongoDB",
+    "Supabase",
+    "Tailwind CSS",
+    "Java",
+    "Kotlin",
+    "REST APIs",
+    "GraphQL",
+  ];
+
   return (
     <section
       id="about-me"
       className="relative z-10 w-full py-20 px-6 lg:px-20"
+      itemScope
+      itemType="https://schema.org/Person"
     >
+      {/* Hidden SEO Content */}
+      <div className="sr-only">
+        <h1>About David R. Fajardo - Full-Stack Developer & Software Engineer</h1>
+        <p>
+          David R. Fajardo is a Full-Stack Developer and Software Engineer based in Caloocan City, Metro Manila, Philippines.
+          With over 2 years of professional experience, David specializes in building modern web applications using
+          Next.js, React, TypeScript, Node.js, and various database technologies including PostgreSQL, MySQL, and MongoDB.
+        </p>
+        <p>
+          David has successfully delivered more than 10 projects for clients worldwide, maintaining a 99% on-time delivery rate.
+          He is known for creating fast, secure, and scalable web applications with excellent user experiences.
+        </p>
+        <p>
+          Technical skills include: {techStack.join(", ")}. David is available for freelance projects and full-time opportunities.
+        </p>
+        <meta itemProp="name" content="David R. Fajardo" />
+        <meta itemProp="jobTitle" content="Full-Stack Developer & Software Engineer" />
+        <meta itemProp="description" content="Expert Full-Stack Developer specializing in Next.js, React, TypeScript, and modern web development." />
+        <link itemProp="url" href="https://www.davidfajardo.space" />
+        <meta itemProp="email" content="david.fajardo26v@gmail.com" />
+        <span itemProp="address" itemScope itemType="https://schema.org/PostalAddress">
+          <meta itemProp="addressLocality" content="Caloocan City" />
+          <meta itemProp="addressRegion" content="Metro Manila" />
+          <meta itemProp="addressCountry" content="Philippines" />
+        </span>
+      </div>
+
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
@@ -68,7 +115,7 @@ const About = () => {
 
       <div className="max-w-6xl mx-auto relative">
         {/* Header */}
-        <div className="text-center mb-16">
+        <header className="text-center mb-16">
           <p className="uppercase text-xs tracking-[0.3em] text-[#b49bff] mb-4">
             About Me
           </p>
@@ -79,19 +126,20 @@ const About = () => {
             </span>
           </h2>
           <p className="text-base md:text-lg text-gray-300 leading-relaxed max-w-3xl mx-auto">
-            I&apos;m a full-stack engineer who loves shaping ideas into shippable, calm,
-            and resilient experiences. I balance UX polish with solid architecture,
+            Hi, I&apos;m <strong className="text-white">David R. Fajardo</strong>, a full-stack engineer based in the Philippines 
+            who loves shaping ideas into shippable, calm, and resilient experiences. I balance UX polish with solid architecture,
             guide teams through delivery, and keep everyone aligned on outcomes—so
             good ideas become products people trust.
           </p>
-        </div>
+        </header>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16" role="list" aria-label="Professional statistics">
           {stats.map((stat, idx) => (
-            <div
+            <article
               key={idx}
               className="group relative p-6 rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur text-center hover:border-[#7042f8]/50 transition-all duration-300"
+              role="listitem"
             >
               {/* Hover glow */}
               <div 
@@ -102,19 +150,21 @@ const About = () => {
                 {stat.value}
               </p>
               <p className="text-sm text-gray-400">{stat.label}</p>
-            </div>
+            </article>
           ))}
         </div>
 
         {/* Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-12" role="list" aria-label="Core competencies">
           {skills.map((skill, idx) => (
-            <div
+            <article
               key={idx}
               className="group flex items-start gap-4 p-5 rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur hover:border-[#7042f8]/50 transition-all duration-300"
+              role="listitem"
             >
               <div 
                 className="w-12 h-12 rounded-xl bg-[#7042f8]/10 border border-[#7042f8]/30 flex items-center justify-center text-[#b49bff] flex-shrink-0 group-hover:bg-[#7042f8]/20 group-hover:border-[#7042f8]/50 group-hover:scale-110 transition-all duration-300"
+                aria-hidden="true"
               >
                 {skill.icon}
               </div>
@@ -124,8 +174,25 @@ const About = () => {
                 </h3>
                 <p className="text-gray-400 text-sm">{skill.description}</p>
               </div>
-            </div>
+            </article>
           ))}
+        </div>
+
+        {/* Tech Stack */}
+        <div className="mb-12">
+          <h3 className="text-center text-sm uppercase tracking-[0.2em] text-gray-500 mb-6">
+            Technologies I Work With
+          </h3>
+          <div className="flex flex-wrap justify-center gap-2">
+            {techStack.map((tech, idx) => (
+              <span
+                key={idx}
+                className="px-3 py-1.5 text-xs font-medium rounded-full bg-[#0c0f1a]/80 border border-[#2A0E61]/50 text-gray-300 hover:border-[#7042f8]/50 hover:text-[#b49bff] transition-all"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* What I Bring Section */}
@@ -156,19 +223,41 @@ const About = () => {
                 icon: "🎯",
               },
             ].map((item, idx) => (
-              <div key={idx} className="space-y-3">
-                <span className="text-3xl">{item.icon}</span>
+              <article key={idx} className="space-y-3">
+                <span className="text-3xl" aria-hidden="true">{item.icon}</span>
                 <h4 className="text-white font-medium">{item.title}</h4>
                 <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
-              </div>
+              </article>
             ))}
+          </div>
+        </div>
+
+        {/* Personal Note */}
+        <div className="rounded-2xl border border-[#2A0E61]/50 bg-gradient-to-br from-[#7042f8]/5 to-transparent p-6 md:p-8 mb-12">
+          <h3 className="text-lg font-semibold text-white mb-4">A Bit More About Me</h3>
+          <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
+            <p>
+              I started my journey in software development driven by curiosity and a passion for building things that matter. 
+              Over the years, I&apos;ve had the privilege of working with startups and established companies alike, 
+              helping them transform their ideas into functional, beautiful, and performant applications.
+            </p>
+            <p>
+              When I&apos;m not coding, you&apos;ll find me exploring new technologies, contributing to open-source projects, 
+              or writing about software development best practices on my blog. I believe in continuous learning and 
+              staying updated with the latest trends in the tech industry.
+            </p>
+            <p>
+              I&apos;m particularly passionate about <strong className="text-white">developer experience</strong>, 
+              <strong className="text-white"> performance optimization</strong>, and building products that users love. 
+              I approach every project with the mindset of creating something I&apos;d be proud to use myself.
+            </p>
           </div>
         </div>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="mailto:david.fajardo26v@gmail.com"
+            href="/contact"
             className="group relative px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#7042f8] to-[#b49bff] text-white font-semibold overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(112,66,248,0.4)]"
           >
             <span className="relative z-10 flex items-center gap-2">
@@ -192,6 +281,9 @@ const About = () => {
 
         {/* Bottom Quote */}
         <div className="mt-16 text-center">
+          <blockquote className="text-gray-400 italic text-sm max-w-xl mx-auto mb-6">
+            &quot;Great software is built by people who care deeply about both the code they write and the users who will use it.&quot;
+          </blockquote>
           <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-[#0f1220]/80 border border-[#2A0E61]/30">
             <div className="relative">
               <div className="w-2.5 h-2.5 rounded-full bg-green-500" />

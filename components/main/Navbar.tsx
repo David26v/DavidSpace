@@ -37,14 +37,14 @@ const Navbar = () => {
         <div className="flex items-center">
           <a href="/" className="h-auto w-auto flex flex-row items-center">
             <Image
-              src="/NavLogo.png"
-              alt="logo"
+              src="/main_logo-removebg.png"
+              alt="David Fajardo Logo"
               width={64}
               height={64}
               className="cursor-pointer hover:animate-slowspin"
             />
             <span className="font-bold ml-[10px] hidden md:block text-gray-200 tracking-wide">
-              David Space
+              David Fajardo Space
             </span>
           </a>
         </div>

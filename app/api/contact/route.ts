@@ -296,8 +296,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const logoUrl = "https://david-space--gules.vercel.app/NavLogo.png";
-    const portfolioUrl = "https://david-space--gules.vercel.app";
+    const logoUrl = "https://www.davidfajardo.space/NavLogo.png";
+    const portfolioUrl = "https://www.davidfajardo.space";
 
     // Generate attachment info for email
     const attachmentInfo =
@@ -601,17 +601,12 @@ ${sanitizedMessage}
                           </a>
                         </td>
                         <td style="padding: 0 6px;">
-                          <a href="https://www.linkedin.com/in/david-fajardo" style="display: inline-block; width: 42px; height: 42px; background: #0c0f1a; border: 1px solid #2A0E61; border-radius: 12px; text-align: center; line-height: 42px; text-decoration: none;">
+                          <a href="https://www.linkedin.com/in/david-rodrigo-fajardo/" style="display: inline-block; width: 42px; height: 42px; background: #0c0f1a; border: 1px solid #2A0E61; border-radius: 12px; text-align: center; line-height: 42px; text-decoration: none;">
                             <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" width="20" height="20" style="vertical-align: middle; opacity: 0.7;" />
                           </a>
                         </td>
                         <td style="padding: 0 6px;">
-                          <a href="https://www.facebook.com/LeL0uCh26/" style="display: inline-block; width: 42px; height: 42px; background: #0c0f1a; border: 1px solid #2A0E61; border-radius: 12px; text-align: center; line-height: 42px; text-decoration: none;">
-                            <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" alt="Facebook" width="20" height="20" style="vertical-align: middle; opacity: 0.7;" />
-                          </a>
-                        </td>
-                        <td style="padding: 0 6px;">
-                          <a href="https://www.instagram.com/chinitz_david26/" style="display: inline-block; width: 42px; height: 42px; background: #0c0f1a; border: 1px solid #2A0E61; border-radius: 12px; text-align: center; line-height: 42px; text-decoration: none;">
+                          <a href="https://www.instagram.com/vid_26.fajardo/" style="display: inline-block; width: 42px; height: 42px; background: #0c0f1a; border: 1px solid #2A0E61; border-radius: 12px; text-align: center; line-height: 42px; text-decoration: none;">
                             <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" width="20" height="20" style="vertical-align: middle; opacity: 0.7;" />
                           </a>
                         </td>

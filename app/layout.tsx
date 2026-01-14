@@ -7,7 +7,7 @@ import Footer from "@/components/main/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 // Base URL for your site
-const siteUrl = "https://david-space--gules.vercel.app";
+const siteUrl = "https://www.davidfajardo.space";
 
 export const metadata: Metadata = {
   // Primary Meta Tags
@@ -16,26 +16,83 @@ export const metadata: Metadata = {
     template: "%s | David R. Fajardo",
   },
   description:
-    "David R. Fajardo is a Full-Stack Developer and Software Engineer from the Philippines specializing in Next.js, React, TypeScript, and modern web development. Building fast, secure, and scalable web applications.",
+    "David R. Fajardo - Expert Full-Stack Developer and Software Engineer from Caloocan City, Philippines. Specializing in Next.js, React, TypeScript, Node.js, and modern web development. Building fast, secure, and scalable web applications. Available for freelance and full-time opportunities. Contact for web development services.",
   keywords: [
     "David Fajardo",
     "David R. Fajardo",
+    "David R Fajardo",
+    "David Rodrigo Fajardo",
     "David Fajardo Developer",
+    "David R. Fajardo Developer",
     "David Fajardo Software Engineer",
+    "David R. Fajardo Software Engineer",
+    "David Fajardo Full Stack Developer",
+    "David R. Fajardo Full Stack Developer",
     "David Fajardo Philippines",
+    "David R. Fajardo Philippines",
+    "David Fajardo Caloocan",
+    "David R. Fajardo Caloocan",
+    "David Fajardo Portfolio",
+    "David R. Fajardo Portfolio",
+    "David Fajardo Web Developer",
+    "David R. Fajardo Web Developer",
+    "David Fajardo React Developer",
+    "David R. Fajardo React Developer",
+    "David Fajardo Nextjs Developer",
+    "David R. Fajardo Nextjs Developer",
+    "David Fajardo Freelance",
+    "David R. Fajardo Freelance",
+    "David Fajardo Contact",
+    "David R. Fajardo Contact",
+    "David Fajardo Services",
+    "David R. Fajardo Services",
     "Full-Stack Developer",
+    "Full Stack Developer Philippines",
+    "Full Stack Developer Caloocan",
     "Software Engineer",
+    "Software Engineer Philippines",
     "Web Developer",
+    "Web Developer Philippines",
+    "Web Developer Caloocan",
     "React Developer",
-    "Next.js Developer",
+    "React Developer Philippines",
+    "Nextjs Developer",
+    "Nextjs Developer Philippines",
     "TypeScript Developer",
     "Frontend Developer",
+    "Frontend Developer Philippines",
     "Backend Developer",
+    "Backend Developer Philippines",
     "Philippines Developer",
+    "Philippines Software Engineer",
+    "Filipino Developer",
+    "Filipino Software Engineer",
     "Freelance Developer",
+    "Freelance Developer Philippines",
+    "Freelance Web Developer",
     "Web Development Services",
     "Custom Web Applications",
+    "Custom Software Development",
     "UI/UX Developer",
+    "UI/UX Designer Philippines",
+    "Nextjs Expert",
+    "React Expert",
+    "Supabase Developer",
+    "PostgreSQL Developer",
+    "Node.js Developer",
+    "Mobile App Developer",
+    "Java Developer",
+    "Kotlin Developer",
+    "Ruby on Rails Developer",
+    "Laravel Developer",
+    "Database Developer",
+    "API Development",
+    "E-commerce Developer",
+    "SaaS Developer",
+    "Startup Developer",
+    "Rooche Digital",
+    "Jeonsoft Developer",
+    "Quickstore Developer",
   ],
   authors: [
     {
@@ -67,14 +124,14 @@ export const metadata: Metadata = {
     siteName: "David R. Fajardo Portfolio",
     title: "David R. Fajardo | Full-Stack Developer & Software Engineer",
     description:
-      "Full-Stack Developer specializing in Next.js, React, and TypeScript. Building modern, fast, and secure web applications. Available for freelance and full-time opportunities.",
+      "David R. Fajardo - Expert Full-Stack Developer from Philippines specializing in Next.js, React, TypeScript, Node.js, and Supabase. Building modern, fast, and secure web applications. 10+ projects delivered. Available for freelance and full-time opportunities.",
     images: [
       {
-        url: `${siteUrl}/og-image.jpg`, // Create this image (1200x630px recommended)
+        url: `${siteUrl}/logo_version_2.png`,
         width: 1200,
         height: 630,
-        alt: "David R. Fajardo - Full-Stack Developer",
-        type: "image/jpg",
+        alt: "David R. Fajardo - Full-Stack Developer & Software Engineer",
+        type: "image/png",
       },
     ],
   },
@@ -84,8 +141,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "David R. Fajardo | Full-Stack Developer & Software Engineer",
     description:
-      "Full-Stack Developer specializing in Next.js, React, and TypeScript. Building modern web applications.",
-    images: [`${siteUrl}/og-image.jpg`],
+      "David R. Fajardo - Full-Stack Developer and Software Engineer from Philippines. Expert in Next.js, React, TypeScript, and modern web development. Building fast, secure applications.",
+    images: [`${siteUrl}/logo_version_2.png`],
     creator: "@davidfajardo", // Update with your Twitter handle
   },
 
@@ -106,7 +163,7 @@ export const metadata: Metadata = {
 
   // Verification (add your verification codes)
   verification: {
-    google: "lB_JOawyvW4AZ88lXaHszxq493_pQO5xEbvcAQ3CdBA", 
+    google: "vUNBAUtbXaVvcLOfBhuxwyDo31OVXyw4E_kMB38Vcig", 
   },
 
   // Canonical URL
@@ -126,7 +183,7 @@ export const metadata: Metadata = {
 
   // Other
   other: {
-    "google-site-verification": "lB_JOawyvW4AZ88lXaHszxq493_pQO5xEbvcAQ3CdBA",
+    "google-site-verification": "vUNBAUtbXaVvcLOfBhuxwyDo31OVXyw4E_kMB38Vcig",
   },
 };
 
@@ -152,29 +209,41 @@ const jsonLd = {
       familyName: "Fajardo",
       alternateName: ["David Fajardo", "David R Fajardo"],
       description:
-        "Full-Stack Developer and Software Engineer specializing in Next.js, React, TypeScript, and modern web development.",
+        "David R. Fajardo is an expert Full-Stack Developer and Software Engineer from Caloocan City, Philippines, specializing in Next.js, React, TypeScript, Node.js, Supabase, and modern web development. Building fast, secure, and scalable web applications with 10+ projects delivered.",
       url: siteUrl,
-      image: `${siteUrl}/Profile.png`,
+      image: `${siteUrl}/og-image.jpg`,
       email: "david.fajardo26v@gmail.com",
       telephone: "+639762594374",
-      jobTitle: "Full-Stack Developer",
-      worksFor: {
+      jobTitle: ["Full-Stack Developer", "Software Engineer", "Web Developer"],
+      worksFor: [
+        {
+          "@type": "Organization",
+          name: "Rooche Digital",
+          jobTitle: "Software Engineer",
+        },
+      ],
+      alumniOf: {
         "@type": "Organization",
-        name: "Rooche Digital",
+        name: "Jeonsoft Corporation",
       },
       address: {
         "@type": "PostalAddress",
         addressLocality: "Caloocan City",
+        addressRegion: "Metro Manila",
         addressCountry: "Philippines",
+      },
+      nationality: {
+        "@type": "Country",
+        name: "Philippines",
       },
       sameAs: [
         "https://github.com/David26v",
-        "https://www.linkedin.com/in/david-fajardo",
-        "https://www.facebook.com/LeL0uCh26/",
-        "https://www.instagram.com/chinitz_david26/",
+        "https://www.linkedin.com/in/david-rodrigo-fajardo/",
+        "https://www.instagram.com/vid_26.fajardo/",
       ],
       knowsAbout: [
         "Web Development",
+        "Full-Stack Development",
         "Software Engineering",
         "Next.js",
         "React",
@@ -184,7 +253,28 @@ const jsonLd = {
         "Supabase",
         "Tailwind CSS",
         "UI/UX Design",
+        "Frontend Development",
+        "Backend Development",
+        "API Development",
+        "Database Design",
+        "Mobile Development",
+        "Java",
+        "Kotlin",
+        "Ruby on Rails",
+        "Laravel",
       ],
+      offers: {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          serviceType: "Web Development Services",
+          areaServed: "Worldwide",
+          availableChannel: {
+            "@type": "ServiceChannel",
+            serviceUrl: `${siteUrl}/contact`,
+          },
+        },
+      },
     },
     {
       "@type": "WebSite",
@@ -192,7 +282,7 @@ const jsonLd = {
       url: siteUrl,
       name: "David R. Fajardo Portfolio",
       description:
-        "Portfolio website of David R. Fajardo, Full-Stack Developer and Software Engineer",
+        "Portfolio website of David R. Fajardo - Expert Full-Stack Developer and Software Engineer from Philippines specializing in Next.js, React, TypeScript, and modern web development",
       publisher: {
         "@id": `${siteUrl}/#person`,
       },
@@ -210,7 +300,7 @@ const jsonLd = {
         "@id": `${siteUrl}/#person`,
       },
       description:
-        "David R. Fajardo is a Full-Stack Developer from the Philippines specializing in building modern web applications with Next.js, React, and TypeScript.",
+        "David R. Fajardo is an expert Full-Stack Developer and Software Engineer from Caloocan City, Philippines, specializing in building modern, fast, and secure web applications with Next.js, React, TypeScript, Node.js, and Supabase.",
       inLanguage: "en-US",
     },
     {
@@ -230,24 +320,55 @@ const jsonLd = {
         {
           "@type": "Service",
           name: "Web Development",
-          description: "Custom web application development with Next.js and React",
+          description: "Custom web application development with Next.js, React, and TypeScript",
+          provider: {
+            "@id": `${siteUrl}/#person`,
+          },
         },
         {
           "@type": "Service",
           name: "Full-Stack Development",
-          description: "End-to-end development from frontend to backend and database",
+          description: "End-to-end development from frontend to backend and database with Node.js, PostgreSQL, and Supabase",
+          provider: {
+            "@id": `${siteUrl}/#person`,
+          },
         },
         {
           "@type": "Service",
           name: "UI/UX Design",
-          description: "User-centric interface design with modern aesthetics",
+          description: "User-centric interface design with modern aesthetics and responsive layouts",
+          provider: {
+            "@id": `${siteUrl}/#person`,
+          },
+        },
+        {
+          "@type": "Service",
+          name: "Mobile App Development",
+          description: "Cross-platform mobile applications with React Native, Java, and Kotlin",
+          provider: {
+            "@id": `${siteUrl}/#person`,
+          },
         },
         {
           "@type": "Service",
           name: "Consulting",
-          description: "Technical consulting and code audits",
+          description: "Technical consulting, code audits, and architecture reviews",
+          provider: {
+            "@id": `${siteUrl}/#person`,
+          },
         },
       ],
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": `${siteUrl}/#professional-service`,
+      name: "David R. Fajardo - Web Development Services",
+      description: "Full-Stack Web Development and Software Engineering Services",
+      provider: {
+        "@id": `${siteUrl}/#person`,
+      },
+      areaServed: "Worldwide",
+      serviceType: "Web Development",
     },
   ],
 };
