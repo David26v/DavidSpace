@@ -3,13 +3,6 @@
 import React from "react";
 
 const About = () => {
-  const stats = [
-    { value: "2+", label: "Years Experience" },
-    { value: "10+", label: "Projects Delivered" },
-    { value: "5+", label: "Happy Clients" },
-    { value: "99%", label: "On-Time Delivery" },
-  ];
-
   const skills = [
     {
       icon: (
@@ -79,12 +72,9 @@ const About = () => {
         <h1>About David R. Fajardo - Full-Stack Developer & Software Engineer</h1>
         <p>
           David R. Fajardo is a Full-Stack Developer and Software Engineer based in Caloocan City, Metro Manila, Philippines.
-          With over 2 years of professional experience, David specializes in building modern web applications using
-          Next.js, React, TypeScript, Node.js, and various database technologies including PostgreSQL, MySQL, and MongoDB.
-        </p>
-        <p>
-          David has successfully delivered more than 10 projects for clients worldwide, maintaining a 99% on-time delivery rate.
-          He is known for creating fast, secure, and scalable web applications with excellent user experiences.
+          David specializes in building modern web applications using Next.js, React, TypeScript, Node.js, and various 
+          database technologies including PostgreSQL, MySQL, and MongoDB. He is known for creating fast, secure, and 
+          scalable web applications with excellent user experiences.
         </p>
         <p>
           Technical skills include: {techStack.join(", ")}. David is available for freelance projects and full-time opportunities.
@@ -132,27 +122,6 @@ const About = () => {
             good ideas become products people trust.
           </p>
         </header>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16" role="list" aria-label="Professional statistics">
-          {stats.map((stat, idx) => (
-            <article
-              key={idx}
-              className="group relative p-6 rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur text-center hover:border-[#7042f8]/50 transition-all duration-300"
-              role="listitem"
-            >
-              {/* Hover glow */}
-              <div 
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                style={{ background: "radial-gradient(circle at 50% 50%, rgba(112, 66, 248, 0.1) 0%, transparent 70%)" }}
-              />
-              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#7042f8] to-[#b49bff] bg-clip-text text-transparent mb-1">
-                {stat.value}
-              </p>
-              <p className="text-sm text-gray-400">{stat.label}</p>
-            </article>
-          ))}
-        </div>
 
         {/* Skills Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-12" role="list" aria-label="Core competencies">

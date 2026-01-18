@@ -931,12 +931,12 @@ export const BLOG_POSTS: BlogPost[] = [
       "Why providing competitive salaries, benefits, and growth opportunities is essential for building successful tech teams. A guide for leaders who want to retain top talent.",
     date: "2025-03-10",
     tags: ["Management", "Leadership", "Career", "Compensation", "Team Building"],
-    readingTimeMinutes: 14,
+    readingTimeMinutes: 18,
     coverImage: "/blogs/compensation.jpg",
     content: [
       {
         type: "p",
-        text: "The best products are built by motivated, well-compensated teams. As someone who has worked in various tech environments, I've seen firsthand how fair compensation and supportive management directly impact code quality, innovation, and retention.",
+        text: "The best products are built by motivated, well-compensated teams. As someone who has worked in various tech environments, I've seen firsthand how fair compensation and supportive management directly impact code quality, innovation, and retention. This isn't just about being nice - it's about building sustainable businesses that can compete for the best talent.",
       },
       {
         type: "blockquote",
@@ -944,28 +944,111 @@ export const BLOG_POSTS: BlogPost[] = [
       },
       {
         type: "h2",
-        text: "The Business Case for Fair Compensation",
+        text: "The True Cost of Employee Turnover",
       },
       {
         type: "p",
-        text: "Underpaying employees isn't just unfair - it's expensive. The cost of replacing a developer includes recruiting fees, interview time, onboarding, and lost institutional knowledge.",
+        text: "Many companies underestimate the real cost of losing employees. When a developer leaves, you don't just lose their salary - you lose months of productivity and institutional knowledge that took years to build.",
       },
       {
         type: "ul",
         items: [
-          "Competitive salaries attract top talent",
-          "Fair pay reduces turnover and rehiring costs",
-          "Employees who feel valued are more productive",
-          "Teams with low turnover ship faster with fewer bugs",
+          "Recruiting costs: Job postings, recruiter fees, interview time from multiple team members",
+          "Onboarding costs: Training, mentorship time, reduced productivity during ramp-up (3-6 months)",
+          "Lost knowledge: Understanding of codebase, business logic, customer context, and team dynamics",
+          "Team morale impact: Remaining team members often feel demoralized and overworked",
+          "Project delays: New hires need time to become productive, pushing back deadlines",
+        ],
+      },
+      {
+        type: "p",
+        text: "Studies show that replacing a software engineer costs 50-200% of their annual salary. For a developer earning $80,000, that's $40,000 to $160,000 in replacement costs. Suddenly, that $10,000 raise they asked for looks like a bargain.",
+      },
+      {
+        type: "h2",
+        text: "The Business Case for Fair Compensation",
+      },
+      {
+        type: "p",
+        text: "Underpaying employees isn't just unfair - it's a poor business decision. Companies that pay below market rate often end up spending more in the long run through constant hiring cycles and reduced productivity.",
+      },
+      {
+        type: "ul",
+        items: [
+          "Competitive salaries attract top talent who can deliver 10x more value",
+          "Fair pay reduces turnover, saving recruitment and training costs",
+          "Employees who feel valued are more engaged and productive",
+          "Teams with low turnover ship faster with fewer bugs due to institutional knowledge",
+          "Happy employees become recruiters, referring other talented professionals",
+        ],
+      },
+      {
+        type: "h3",
+        text: "What Competitive Compensation Looks Like",
+      },
+      {
+        type: "p",
+        text: "Competitive doesn't mean the absolute highest - it means fair relative to the market, role responsibilities, and value delivered. Here's how to think about it:",
+      },
+      {
+        type: "ol",
+        items: [
+          "Research market rates for your location and industry (use Glassdoor, Levels.fyi, LinkedIn Salary)",
+          "Consider the cost of living in your area",
+          "Factor in experience level and specialized skills",
+          "Account for the value the employee brings to the company",
+          "Review and adjust annually - the market changes",
         ],
       },
       {
         type: "h2",
-        text: "Beyond Salary: The Full Package",
+        text: "Beyond Salary: The Complete Compensation Package",
       },
       {
         type: "p",
-        text: "Modern employees evaluate the complete package. Smart management invests in health insurance, flexible work, professional development, and clear career growth paths.",
+        text: "Modern employees evaluate the complete package, not just base salary. Smart management invests in benefits that improve quality of life and demonstrate long-term commitment to employees.",
+      },
+      {
+        type: "h3",
+        text: "Health and Wellness Benefits",
+      },
+      {
+        type: "ul",
+        items: [
+          "Comprehensive health insurance (medical, dental, vision)",
+          "Mental health support and counseling services",
+          "Gym memberships or wellness stipends",
+          "Adequate paid time off (vacation, sick leave, mental health days)",
+          "Parental leave for both parents",
+        ],
+      },
+      {
+        type: "h3",
+        text: "Work-Life Balance",
+      },
+      {
+        type: "ul",
+        items: [
+          "Flexible working hours that respect personal time",
+          "Remote work options or hybrid arrangements",
+          "No expectation of after-hours availability (except true emergencies)",
+          "Reasonable workload that doesn't lead to burnout",
+          "Respect for vacation time - no work emails or calls",
+        ],
+      },
+      {
+        type: "h3",
+        text: "Financial Benefits",
+      },
+      {
+        type: "ul",
+        items: [
+          "Equity or stock options in growing companies",
+          "Performance bonuses tied to clear, achievable goals",
+          "401(k) matching or retirement contributions",
+          "Equipment allowance for remote work setup",
+          "Professional development budget",
+        ],
       },
       {
         type: "h2",
@@ -973,23 +1056,99 @@ export const BLOG_POSTS: BlogPost[] = [
       },
       {
         type: "p",
-        text: "People don't just leave for more money - they leave because they feel stuck. Career development is one of the most powerful retention tools.",
+        text: "People don't just leave for more money - they leave because they feel stuck. Career development is one of the most powerful and often underutilized retention tools available to managers.",
+      },
+      {
+        type: "h3",
+        text: "Creating Clear Growth Paths",
+      },
+      {
+        type: "p",
+        text: "Employees need to see a future at your company. Without clear progression, ambitious people will look elsewhere.",
+      },
+      {
+        type: "ul",
+        items: [
+          "Define clear career ladders (Junior → Mid → Senior → Lead → Principal)",
+          "Document what's required for each level transition",
+          "Have regular career conversations (not just annual reviews)",
+          "Provide opportunities to develop new skills",
+          "Support both IC (Individual Contributor) and management tracks",
+        ],
+      },
+      {
+        type: "h3",
+        text: "Investing in Professional Development",
+      },
+      {
+        type: "ul",
+        items: [
+          "Conference attendance and speaking opportunities",
+          "Online courses and certifications",
+          "Books, subscriptions, and learning resources",
+          "Internal tech talks and knowledge sharing",
+          "Mentorship programs (both giving and receiving)",
+          "Time allocated for learning during work hours",
+        ],
+      },
+      {
+        type: "h3",
+        text: "Challenging Work Assignments",
+      },
+      {
+        type: "p",
+        text: "Growth doesn't just come from training - it comes from doing challenging work. Give employees opportunities to stretch their abilities.",
+      },
+      {
+        type: "ul",
+        items: [
+          "Rotate people through different projects and technologies",
+          "Let junior developers tackle meaningful challenges with support",
+          "Encourage ownership of features or systems",
+          "Support side projects that benefit both employee and company",
+          "Include developers in architecture and design decisions",
+        ],
       },
       {
         type: "h2",
-        text: "Know Your Worth",
+        text: "The Manager's Role in Retention",
       },
       {
         type: "p",
-        text: "This message is for employees: understand your value in the market. If your company isn't compensating you fairly despite your contributions, you have options.",
+        text: "People don't leave companies - they leave managers. The direct manager has enormous influence over an employee's day-to-day experience and career trajectory.",
       },
       {
-        type: "blockquote",
-        text: "Never beg for compensation you already earned through experience and results. If they can't increase your salary, increase your options. Start sending resumes. - Work Is Life PH",
+        type: "h3",
+        text: "What Good Managers Do",
+      },
+      {
+        type: "ul",
+        items: [
+          "Shield the team from unnecessary politics and interruptions",
+          "Advocate for fair compensation and promotions",
+          "Provide regular, constructive feedback (not just during reviews)",
+          "Remove blockers and help the team succeed",
+          "Trust their team and avoid micromanagement",
+          "Take responsibility when things go wrong, give credit when things go right",
+        ],
+      },
+      {
+        type: "h3",
+        text: "Regular One-on-Ones",
       },
       {
         type: "p",
-        text: "Your skills are valuable. If your current employer doesn't recognize that, someone else will. Don't stay in a situation where you're undervalued - the tech industry has opportunities for those who deliver results.",
+        text: "Weekly or bi-weekly one-on-ones are essential. These aren't status updates - they're about the person, their challenges, and their growth.",
+      },
+      {
+        type: "ul",
+        items: [
+          "Ask about challenges and blockers",
+          "Discuss career goals and progress",
+          "Give and receive feedback",
+          "Check on workload and well-being",
+          "Build trust and psychological safety",
+        ],
       },
       {
         type: "h2",
@@ -997,7 +1156,157 @@ export const BLOG_POSTS: BlogPost[] = [
       },
       {
         type: "p",
-        text: "Never underestimate the power of genuine recognition. People want to feel that their work matters and is noticed.",
+        text: "Never underestimate the power of genuine recognition. People want to feel that their work matters and is noticed. Recognition doesn't have to be expensive - it has to be sincere and specific.",
+      },
+      {
+        type: "h3",
+        text: "Effective Recognition Practices",
+      },
+      {
+        type: "ul",
+        items: [
+          "Be specific: 'Great job on the payment integration - the error handling was thorough' beats 'Good work'",
+          "Be timely: Recognize achievements when they happen, not months later",
+          "Be public when appropriate: Celebrate wins in team meetings and company channels",
+          "Be private when needed: Some people prefer quiet recognition",
+          "Be consistent: Recognize everyone's contributions, not just the loudest voices",
+        ],
+      },
+      {
+        type: "h3",
+        text: "Beyond Words: Meaningful Recognition",
+      },
+      {
+        type: "ul",
+        items: [
+          "Spot bonuses for exceptional work",
+          "Extra time off after intense project pushes",
+          "Opportunities to present work to leadership",
+          "First choice on exciting new projects",
+          "Public acknowledgment in company communications",
+        ],
+      },
+      {
+        type: "h2",
+        text: "Warning Signs of Impending Departure",
+      },
+      {
+        type: "p",
+        text: "By the time someone gives notice, it's usually too late. Good managers recognize warning signs early:",
+      },
+      {
+        type: "ul",
+        items: [
+          "Decreased engagement in meetings and discussions",
+          "Less initiative on new projects or improvements",
+          "Increased absences or schedule changes",
+          "Withdrawal from team social activities",
+          "Complaints about previously tolerated issues",
+          "Sudden interest in 'documenting everything'",
+          "LinkedIn profile updates and networking activity",
+        ],
+      },
+      {
+        type: "p",
+        text: "If you notice these signs, have an honest conversation. Sometimes issues can be addressed. Sometimes they can't - but at least you'll understand what's happening.",
+      },
+      {
+        type: "h2",
+        text: "For Employees: Know Your Worth",
+      },
+      {
+        type: "p",
+        text: "This section is for employees: understand your value in the market. If your company isn't compensating you fairly despite your contributions, you have options. Your loyalty should be reciprocal.",
+      },
+      {
+        type: "h3",
+        text: "How to Evaluate Your Compensation",
+      },
+      {
+        type: "ul",
+        items: [
+          "Research market rates on Glassdoor, Levels.fyi, and LinkedIn",
+          "Talk to peers in similar roles (salary transparency helps everyone)",
+          "Consider total compensation, not just base salary",
+          "Factor in non-monetary benefits (flexibility, learning, team quality)",
+          "Be honest about your own performance and contributions",
+        ],
+      },
+      {
+        type: "h3",
+        text: "Having the Compensation Conversation",
+      },
+      {
+        type: "ol",
+        items: [
+          "Document your achievements and impact with specific examples",
+          "Research market rates to support your ask",
+          "Schedule a dedicated meeting (not a casual chat)",
+          "Present your case professionally, focusing on value delivered",
+          "Be prepared for negotiation - know your minimum acceptable outcome",
+          "Get any agreements in writing",
+        ],
+      },
+      {
+        type: "blockquote",
+        text: "Never beg for compensation you already earned through experience and results. If they can't increase your salary, increase your options. Start sending resumes. - Work Is Life PH",
+      },
+      {
+        type: "h3",
+        text: "When to Move On",
+      },
+      {
+        type: "p",
+        text: "Sometimes the best decision is to leave. Consider moving on when:",
+      },
+      {
+        type: "ul",
+        items: [
+          "You're significantly underpaid and raises are repeatedly denied or delayed",
+          "There's no path for career growth despite your requests",
+          "The work environment is toxic or unsupportive",
+          "Your values no longer align with the company's direction",
+          "You've stopped learning and growing",
+          "Better opportunities exist that align with your goals",
+        ],
+      },
+      {
+        type: "p",
+        text: "Your skills are valuable. If your current employer doesn't recognize that, someone else will. Don't stay in a situation where you're undervalued - the tech industry has opportunities for those who deliver results.",
+      },
+      {
+        type: "h2",
+        text: "Building a Culture of Retention",
+      },
+      {
+        type: "p",
+        text: "Retention isn't about one big thing - it's about many small things done consistently over time. It's a culture, not a policy.",
+      },
+      {
+        type: "h3",
+        text: "Key Cultural Elements",
+      },
+      {
+        type: "ul",
+        items: [
+          "Psychological safety: People can take risks and make mistakes without fear",
+          "Transparency: Decisions are explained, not just announced",
+          "Autonomy: Trust people to do their jobs without micromanagement",
+          "Purpose: Connect daily work to meaningful outcomes",
+          "Community: Foster genuine connections between team members",
+        ],
+      },
+      {
+        type: "h2",
+        text: "The Bottom Line",
+      },
+      {
+        type: "p",
+        text: "Fair compensation and good management aren't just nice-to-haves - they're competitive advantages. Companies that treat their people well build better products, attract better talent, and outperform their competitors in the long run.",
+      },
+      {
+        type: "p",
+        text: "For leaders: invest in your people. The ROI is undeniable. For employees: know your worth and don't settle for less than you deserve. The best companies are looking for you.",
       },
       {
         type: "blockquote",

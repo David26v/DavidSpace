@@ -9,17 +9,17 @@ import Blogs from "@/components/main/Blogs";
 
 export default function Home() {
   return (
-    <main className="h-full w-full relative">
+    <div className="h-full w-full relative">
       <StarsCanvas />
-      <div className="flex flex-col gap-20 relative z-10">
+      <div className="flex flex-col gap-12 sm:gap-16 md:gap-20 relative z-10">
         <Hero />
         <About />
         <Skills />
-        <Experience/>
+        <Experience />
         <Encryption />
         <Projects />  
         <Blogs />
       </div>
-    </main>
+    </div>
   );
 }

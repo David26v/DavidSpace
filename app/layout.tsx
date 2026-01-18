@@ -4,7 +4,12 @@ import "./globals.css";
 import Navbar from "@/components/main/Navbar";
 import Footer from "@/components/main/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+  preload: true,
+});
 
 // Base URL for your site
 const siteUrl = "https://www.davidfajardo.space";
@@ -395,10 +400,12 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       </head>
       <body
-        className={`${inter.className} bg-[#030014] overflow-y-scroll overflow-x-hidden`}
+        className={`${inter.className} ${inter.variable} bg-[#030014] overflow-y-scroll overflow-x-hidden antialiased`}
       >
         <Navbar />
-        {children}
+        <main className="pt-[65px]">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
