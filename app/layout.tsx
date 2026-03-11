@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/main/Navbar";
 import Footer from "@/components/main/Footer";
+import BottomNav from "@/components/main/BottomNav";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -403,10 +404,11 @@ export default function RootLayout({
         className={`${inter.className} ${inter.variable} bg-[#030014] overflow-y-scroll overflow-x-hidden antialiased`}
       >
         <Navbar />
-        <main className="pt-[65px]">
+        <main className="pt-[65px] pb-16 md:pb-0">
           {children}
         </main>
         <Footer />
+        <BottomNav />
       </body>
     </html>
   );

@@ -19,8 +19,7 @@ const cards: Card[] = [
     image: "/skills/frontend-services.png",
     icon: "🌐",
     items: [
-      { name: "Next.js 15", icon: "/next.png" },
-      { name: "Next.js 16", icon: "/next.png" },
+      { name: "Next.js", icon: "/next.png" },
       { name: "React", icon: "/react.png" },
       { name: "TypeScript", icon: "/ts.png" },
       { name: "Tailwind", icon: "/tailwind.png" },
@@ -47,8 +46,7 @@ const cards: Card[] = [
     image: "/skills/database-services.jpg",
     icon: "🗄️",
     items: [
-      { name: "PostgreSQL 16", icon: "/postger.png" },
-      { name: "PostgreSQL 17", icon: "/postger.png" },
+      { name: "PostgreSQL", icon: "/postger.png" },
       { name: "Supabase", icon: "/supabase.webp" },
       { name: "MySQL", icon: "/mysql.png" },
       { name: "MongoDB", icon: "/mongodb.png" },
@@ -88,13 +86,6 @@ const cards: Card[] = [
       { name: "UI & UX Design" },
       { name: "Digital Marketing" },
     ],
-  },
-  {
-    title: "Hardware",
-    description: "Hands-on fundamentals to keep devices healthy.",
-    image: "/skills/hardware-services.jpg",
-    icon: "🖥️",
-    items: [{ name: "Basic computer building & repair" }],
   },
 ];
 

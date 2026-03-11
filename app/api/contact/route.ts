@@ -271,16 +271,18 @@ export async function POST(request: NextRequest) {
     const formattedDate = getFormattedDate();
 
     console.log("Creating email transporter...");
+    console.log("EMAIL_USER value:", process.env.EMAIL_USER);
+    console.log("EMAIL_PASS length:", process.env.EMAIL_PASS?.length);
+    
+    // Remove any spaces from the app password (Gmail app passwords have spaces for readability)
+    const emailPass = process.env.EMAIL_PASS?.replace(/\s/g, '') || '';
+    console.log("Cleaned EMAIL_PASS length:", emailPass.length);
+    
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      service: 'gmail', // Use Gmail service instead of manual SMTP config
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
+        pass: emailPass,
       },
     });
 
@@ -288,10 +290,12 @@ export async function POST(request: NextRequest) {
     try {
       await transporter.verify();
       console.log("SMTP connection verified successfully!");
-    } catch (verifyError) {
+    } catch (verifyError: unknown) {
       console.error("SMTP verification failed:", verifyError);
+      const errorMessage = verifyError instanceof Error ? verifyError.message : 'Unknown error';
+      console.error("Error details:", errorMessage);
       return NextResponse.json(
-        { error: "Email server connection failed." },
+        { error: `Email server connection failed: ${errorMessage}` },
         { status: 500 }
       );
     }

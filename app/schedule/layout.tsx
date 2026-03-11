@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+const siteUrl = "https://www.davidfajardo.space";
+
 export const metadata: Metadata = {
   title: "Schedule a Call | David R. Fajardo",
   description:
@@ -11,16 +13,39 @@ export const metadata: Metadata = {
     "Free Consultation",
     "Discovery Call",
     "Project Discussion",
+    "Web Development Consultation",
+    "Hire Developer Philippines",
   ],
-  alternates: {
-    canonical: "https://www.davidfajardo.space/schedule",
+  robots: {
+    index: true,
+    follow: true,
   },
   openGraph: {
     title: "Schedule a Call | David R. Fajardo",
     description:
       "Book a free 30-minute discovery call to discuss your project and goals.",
     type: "website",
-    url: "https://www.davidfajardo.space/schedule",
+    url: `${siteUrl}/schedule`,
+    locale: "en_US",
+    siteName: "David R. Fajardo Portfolio",
+    images: [
+      {
+        url: `${siteUrl}/logo_version_2.png`,
+        width: 1200,
+        height: 630,
+        alt: "Schedule a Call with David R. Fajardo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Schedule a Call | David R. Fajardo",
+    description:
+      "Book a free 30-minute discovery call to discuss your project and goals.",
+    images: [`${siteUrl}/logo_version_2.png`],
+  },
+  alternates: {
+    canonical: `${siteUrl}/schedule`,
   },
 };
 

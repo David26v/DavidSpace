@@ -201,28 +201,6 @@ const About = () => {
           </div>
         </div>
 
-        {/* Personal Note */}
-        <div className="rounded-2xl border border-[#2A0E61]/50 bg-gradient-to-br from-[#7042f8]/5 to-transparent p-6 md:p-8 mb-12">
-          <h3 className="text-lg font-semibold text-white mb-4">A Bit More About Me</h3>
-          <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
-            <p>
-              I started my journey in software development driven by curiosity and a passion for building things that matter. 
-              Over the years, I&apos;ve had the privilege of working with startups and established companies alike, 
-              helping them transform their ideas into functional, beautiful, and performant applications.
-            </p>
-            <p>
-              When I&apos;m not coding, you&apos;ll find me exploring new technologies, contributing to open-source projects, 
-              or writing about software development best practices on my blog. I believe in continuous learning and 
-              staying updated with the latest trends in the tech industry.
-            </p>
-            <p>
-              I&apos;m particularly passionate about <strong className="text-white">developer experience</strong>, 
-              <strong className="text-white"> performance optimization</strong>, and building products that users love. 
-              I approach every project with the mindset of creating something I&apos;d be proud to use myself.
-            </p>
-          </div>
-        </div>
-
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
@@ -248,11 +226,8 @@ const About = () => {
           </a>
         </div>
 
-        {/* Bottom Quote */}
-        <div className="mt-16 text-center">
-          <blockquote className="text-gray-400 italic text-sm max-w-xl mx-auto mb-6">
-            &quot;Great software is built by people who care deeply about both the code they write and the users who will use it.&quot;
-          </blockquote>
+        {/* Availability */}
+        <div className="mt-12 flex justify-center">
           <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-[#0f1220]/80 border border-[#2A0E61]/30">
             <div className="relative">
               <div className="w-2.5 h-2.5 rounded-full bg-green-500" />

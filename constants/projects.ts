@@ -1,5 +1,5 @@
 // Project Types
-export type ProjectCategory = "all" | "web-app" | "landing-page" | "saas" | "portfolio";
+export type ProjectCategory = "all" | "web-app" | "landing-page" | "saas" | "portfolio" | "desktop-app";
 
 export type Project = {
   id: string;
@@ -122,6 +122,20 @@ export const PROJECTS: Project[] = [
     status: "live",
     role: "Web Developer",
   },
+  {
+    id: "file-legacy-extractor",
+    title: "FileLegacyExtractor101",
+    shortDescription: "Electron desktop app for extracting and converting legacy file formats",
+    description:
+      "A cross-platform desktop application built with Electron that extracts, converts, and preserves data from legacy file formats. Supports batch processing, format detection, and modern export options for seamless data migration.",
+    category: "desktop-app",
+    image: "/SpaceWebsite.png",
+    url: "#",
+    techStack: ["Electron", "React", "TypeScript", "Node.js"],
+    year: 2026,
+    status: "development",
+    role: "Full-Stack Developer",
+  },
 ];
 
 export const projectCategories = [
@@ -130,6 +144,7 @@ export const projectCategories = [
   { id: "landing-page", label: "Landing Pages", icon: "◇" },
   { id: "saas", label: "SaaS", icon: "▢" },
   { id: "portfolio", label: "Portfolios", icon: "◆" },
+  { id: "desktop-app", label: "Desktop Apps", icon: "◉" },
 ];
 
 // Get featured projects

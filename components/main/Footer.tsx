@@ -17,7 +17,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative w-full bg-[#030014] text-gray-200 border-t border-[#2A0E61]/50">
+    <footer className="relative w-full bg-[#030014] text-gray-200 border-t border-[#2A0E61]/50 mb-16 md:mb-0">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#7042f8]/5 via-transparent to-transparent pointer-events-none" />
 
@@ -128,6 +128,9 @@ const Footer = () => {
               </Link>
               <Link href="/contact" className="text-gray-400 hover:text-white hover:translate-x-1 transition-all text-sm">
                 Contact
+              </Link>
+              <Link href="/kit" className="text-gray-400 hover:text-white hover:translate-x-1 transition-all text-sm">
+                Turborepo Kit
               </Link>
               <Link href="/about" className="text-gray-400 hover:text-white hover:translate-x-1 transition-all text-sm">
                 Full Bio
