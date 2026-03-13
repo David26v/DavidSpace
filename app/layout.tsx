@@ -219,7 +219,6 @@ const jsonLd = {
       url: siteUrl,
       image: `${siteUrl}/og-image.jpg`,
       email: "david.fajardo26v@gmail.com",
-      telephone: "+639762594374",
       jobTitle: ["Full-Stack Developer", "Software Engineer", "Web Developer"],
       worksFor: [
         {

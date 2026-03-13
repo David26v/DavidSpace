@@ -8,11 +8,13 @@ import {
   RxReader,
   RxArchive,
   RxEnvelopeClosed,
+  RxBackpack,
 } from "react-icons/rx";
 
 const tabs = [
   { name: "Home", icon: RxHome, section: "home", route: "/" },
   { name: "Projects", icon: RxCode, section: "projects", route: "/#projects" },
+  { name: "Experience", icon: RxBackpack, section: "experience", route: "/#experience" },
   { name: "Blog", icon: RxReader, section: "blog", route: "/blog" },
   { name: "Store", icon: RxArchive, section: "store", route: "/store" },
   { name: "Contact", icon: RxEnvelopeClosed, section: "contact", route: "/contact" },
@@ -34,13 +36,14 @@ const BottomNav = () => {
   };
 
   const handleClick = (tab: (typeof tabs)[number]) => {
-    if (tab.route === "/#projects") {
+    if (tab.route === "/#projects" || tab.route === "/#experience") {
+      const sectionId = tab.route.replace("/#", "");
       if (pathname === "/") {
         document
-          .getElementById("projects")
+          .getElementById(sectionId)
           ?.scrollIntoView({ behavior: "smooth" });
       } else {
-        router.push("/#projects");
+        router.push(tab.route);
       }
       return;
     }

@@ -7,7 +7,7 @@ import {
   RxInstagramLogo,
   RxLinkedinLogo,
 } from "react-icons/rx";
-import { FaEnvelope, FaMapMarkerAlt, FaPhone, FaArrowUp } from "react-icons/fa";
+import { FaEnvelope, FaMapMarkerAlt, FaArrowUp } from "react-icons/fa";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -78,13 +78,6 @@ const Footer = () => {
               >
                 <FaEnvelope className="text-[#7042f8] group-hover:scale-110 transition-transform" />
                 david.fajardo26v@gmail.com
-              </a>
-              <a
-                href="tel:+639762594374"
-                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
-              >
-                <FaPhone className="text-[#7042f8] group-hover:scale-110 transition-transform" />
-                +63 976 259 4374
               </a>
               <div className="flex items-start gap-3 text-gray-400">
                 <FaMapMarkerAlt className="text-[#7042f8] mt-1 flex-shrink-0" />
