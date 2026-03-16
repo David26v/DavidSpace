@@ -12,6 +12,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  // Individual plan detail pages
+  const planPages: MetadataRoute.Sitemap = [
+    "student",
+    "starter",
+    "pro",
+    "enterprise",
+    "custom",
+  ].map((plan) => ({
+    url: `${baseUrl}/store/pricing/${plan}`,
+    lastModified: currentDate,
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
   return [
     {
       url: baseUrl,
@@ -43,18 +57,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    // Store pages
     {
       url: `${baseUrl}/store`,
       lastModified: currentDate,
       changeFrequency: "weekly",
-      priority: 0.9,
+      priority: 0.95,
     },
     {
-      url: `${baseUrl}/kit`,
+      url: `${baseUrl}/store/pricing`,
       lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.8,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
+    ...planPages,
     {
       url: `${baseUrl}/schedule`,
       lastModified: currentDate,

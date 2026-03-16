@@ -26,6 +26,9 @@ const config: Config = {
         'slideUp': 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'slideIn': 'slideIn 0.3s ease-out forwards',
         'scaleIn': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'float': 'float 6s ease-in-out infinite',
+        'orbit': 'orbit 40s linear infinite',
+        'orbit-reverse': 'orbit 25s linear infinite reverse',
       },
       keyframes: {
         slowspin: {
@@ -55,6 +58,14 @@ const config: Config = {
         scaleIn: {
           from: { opacity: '0', transform: 'scale(0.95)' },
           to: { opacity: '1', transform: 'scale(1)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
+        orbit: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
         },
       },
       // Custom colors for consistency

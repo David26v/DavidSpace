@@ -4,7 +4,14 @@
       "Bash(npm run build)",
       "Bash(npx next lint)",
       "Bash(npx tsc --noEmit)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(find /e/work-project/David/space -type f \\\\\\(-name *contact* -o -name *nav* -o -name *footer* \\\\\\))",
+      "Bash(find /e/work-project/David/space/app -type f \\\\\\(-name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js \\\\\\))",
+      "Bash(find /e/work-project/David/space/components -type f \\\\\\(-name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js \\\\\\))",
+      "Bash(grep -r \"639762594374\\\\|+63\\\\|phone\" /e/work-project/David/space --include=*.tsx --include=*.ts --include=*.jsx --include=*.js --exclude-dir=node_modules)",
+      "Bash(grep -r \"639762594374\\\\|david\\\\.fajardo26v\\\\|Caloocan\" /e/work-project/David/space/app /e/work-project/David/space/components --include=*.tsx --include=*.ts)",
+      "Bash(ls -la /e/work-project/David/space/app/blog/[slug]/)",
+      "Bash(identify \"E:/work-project/David/space/public/blogs/using_ai.png\")"
     ]
   }
 }

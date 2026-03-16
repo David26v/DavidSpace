@@ -5,6 +5,7 @@ import Skills from "@/components/main/Skills";
 import StarsCanvas from "@/components/main/StarBackgroundClient";
 import Experience from "@/components/main/Experience";
 import Blogs from "@/components/main/Blogs";
+import SdkBanner from "@/components/main/SdkBanner";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <StarsCanvas />
       <div className="flex flex-col gap-12 sm:gap-16 md:gap-20 relative z-10">
         <Hero />
+        <SdkBanner />
         <About />
         <Skills />
         <Experience />
