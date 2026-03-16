@@ -115,6 +115,7 @@ export default function PlanDetailPage() {
   const plan = params.plan as string;
 
   const [email, setEmail] = useState("");
+  const [githubUsername, setGithubUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -158,6 +159,7 @@ export default function PlanDetailPage() {
           productId: product.id,
           license: planId,
           customerEmail: email,
+          githubUsername: githubUsername.trim().replace(/^@/, "") || undefined,
         }),
       });
 
@@ -436,6 +438,14 @@ export default function PlanDetailPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email for delivery"
+                  required
+                  className="w-full px-4 py-3 rounded-xl bg-[#0a0d1a] border border-[#2A0E61]/50 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#7042f8]/50 transition-colors mb-3"
+                />
+                <input
+                  type="text"
+                  value={githubUsername}
+                  onChange={(e) => setGithubUsername(e.target.value)}
+                  placeholder="GitHub username (for repo access)"
                   required
                   className="w-full px-4 py-3 rounded-xl bg-[#0a0d1a] border border-[#2A0E61]/50 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#7042f8]/50 transition-colors mb-3"
                 />

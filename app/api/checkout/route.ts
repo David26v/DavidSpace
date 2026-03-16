@@ -5,7 +5,7 @@ import type { LicenseType } from "@/constants/products";
 
 export async function POST(req: NextRequest) {
   try {
-    const { productId, license, customerEmail } = await req.json();
+    const { productId, license, customerEmail, githubUsername } = await req.json();
 
     if (!productId || !license || !customerEmail) {
       return NextResponse.json(
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     // Strategy 1: API-based checkout (preferred — uses variant IDs)
     try {
-      const checkoutUrl = await createCheckout(plan, customerEmail, successUrl);
+      const checkoutUrl = await createCheckout(plan, customerEmail, successUrl, githubUsername);
       return NextResponse.json({ url: checkoutUrl });
     } catch {
       // Fallback to static checkout URLs

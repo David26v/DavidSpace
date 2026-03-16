@@ -145,7 +145,8 @@ const variantIds: Record<Exclude<LicenseType, "custom">, string | undefined> = {
 export async function createCheckout(
   license: Exclude<LicenseType, "custom">,
   email: string,
-  successUrl: string
+  successUrl: string,
+  githubUsername?: string
 ): Promise<string> {
   const variantId = variantIds[license];
 
@@ -165,6 +166,7 @@ export async function createCheckout(
             email,
             custom: {
               license_tier: license,
+              ...(githubUsername ? { github_username: githubUsername } : {}),
             },
           },
           checkout_options: {

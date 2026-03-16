@@ -104,16 +104,18 @@ export async function findGitHubUser(
  * Invite a user as a collaborator to a specific repo.
  *
  * @param repoName - The repo name (e.g., "SDK-Student")
- * @param email - Buyer's email
+ * @param email - Buyer's email (used for username lookup fallback)
  * @param permission - Access level (default: "pull" = read-only)
+ * @param githubUsername - GitHub username provided during checkout (preferred)
  *
- * Tries by GitHub username first, falls back to email-based invitation.
+ * Priority: provided username → email search → fail with message
  * Returns { success, method, message, repoName }
  */
 export async function inviteCollaborator(
   repoName: string,
   email: string,
-  permission: "pull" | "push" = "pull"
+  permission: "pull" | "push" = "pull",
+  githubUsername?: string
 ): Promise<{ success: boolean; method: string; message: string; repoName: string }> {
   const config = getBaseConfig();
   if (!config) {
@@ -127,11 +129,10 @@ export async function inviteCollaborator(
 
   const { token, owner } = config;
 
-  // Step 1: Try to find the GitHub username by email
-  const username = await findGitHubUser(email);
+  // Resolve username: prefer provided username, fallback to email search
+  const username = githubUsername || await findGitHubUser(email);
 
   if (username) {
-    // Invite by username (most reliable)
     try {
       const res = await fetch(
         `${GITHUB_API}/repos/${owner}/${repoName}/collaborators/${username}`,
@@ -161,65 +162,32 @@ export async function inviteCollaborator(
       } else {
         const errText = await res.text();
         console.error(`[GitHub] Failed to invite @${username} to ${repoName}: ${res.status} ${errText}`);
-        // Fall through to email method
+        return {
+          success: false,
+          method: "username",
+          repoName,
+          message: `Failed to invite @${username}: ${res.status} — ${errText}`,
+        };
       }
     } catch (err) {
       console.error(`[GitHub] Error inviting @${username} to ${repoName}:`, err);
-      // Fall through to email method
-    }
-  }
-
-  // Step 2: Invite by email (works even if user doesn't have a GitHub account yet)
-  try {
-    const res = await fetch(
-      `${GITHUB_API}/repos/${owner}/${repoName}/invitations`,
-      {
-        method: "POST",
-        headers: headers(token),
-        body: JSON.stringify({
-          invitee_email: email,
-          permissions: permission,
-        }),
-      }
-    );
-
-    if (res.status === 201) {
-      console.log(`[GitHub] Email invitation sent to ${email} for ${repoName} — ${permission} access`);
-      return {
-        success: true,
-        method: "email",
-        repoName,
-        message: `GitHub invitation sent to ${email} for ${repoName}. They'll receive an email to accept.`,
-      };
-    } else if (res.status === 422) {
-      const data = await res.json();
-      const errMsg = data.message || "Already invited";
-      console.log(`[GitHub] ${email} for ${repoName} — ${errMsg}`);
-      return {
-        success: true,
-        method: "email",
-        repoName,
-        message: `${email} already has a pending invitation or access to ${repoName}`,
-      };
-    } else {
-      const errText = await res.text();
-      console.error(`[GitHub] Email invite failed for ${repoName}: ${res.status} ${errText}`);
       return {
         success: false,
-        method: "email",
+        method: "username",
         repoName,
-        message: `Failed to send invitation: ${res.status}`,
+        message: `Error inviting @${username}: ${err instanceof Error ? err.message : "Unknown error"}`,
       };
     }
-  } catch (err) {
-    console.error(`[GitHub] Error sending email invite to ${repoName}:`, err);
-    return {
-      success: false,
-      method: "email",
-      repoName,
-      message: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-    };
   }
+
+  // No username found — can't invite without one
+  console.warn(`[GitHub] No GitHub username provided or found for ${email}. Cannot send invite to ${repoName}.`);
+  return {
+    success: false,
+    method: "none",
+    repoName,
+    message: `No GitHub username provided or found for ${email}. The buyer needs to provide their GitHub username.`,
+  };
 }
 
 /**

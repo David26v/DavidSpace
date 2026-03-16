@@ -42,17 +42,24 @@ function getTierFromVariant(variantId: string): LicenseType | null {
 }
 
 /**
- * Extract tier from webhook payload.
- * Tries: custom data → variant ID → null
+ * Extract custom data from webhook payload.
+ * Returns { tier, githubUsername }
  */
-function extractTier(payload: Record<string, unknown>): LicenseType | null {
-  // Try custom data first (set during checkout)
+function extractCustomData(payload: Record<string, unknown>): {
+  tier: LicenseType | null;
+  githubUsername: string | null;
+} {
   const meta = payload.meta as Record<string, unknown> | undefined;
   const customData = (meta?.custom_data || {}) as Record<string, string>;
+
+  // Extract GitHub username
+  const githubUsername = customData.github_username || null;
+
+  // Extract tier from custom data
   if (customData.license_tier) {
     const tier = customData.license_tier;
     if (["student", "starter", "pro", "enterprise"].includes(tier)) {
-      return tier as LicenseType;
+      return { tier: tier as LicenseType, githubUsername };
     }
   }
 
@@ -65,10 +72,10 @@ function extractTier(payload: Record<string, unknown>): LicenseType | null {
     attrs.variant_id?.toString();
 
   if (variantId) {
-    return getTierFromVariant(variantId);
+    return { tier: getTierFromVariant(variantId), githubUsername };
   }
 
-  return null;
+  return { tier: null, githubUsername };
 }
 
 // ─── Webhook Handler ────────────────────────────────────
@@ -112,10 +119,10 @@ export async function POST(req: NextRequest) {
         const status = attrs.status;
         const orderId = order.id;
         const customerName = attrs.user_name || "Customer";
-        const tier = extractTier(payload);
+        const { tier, githubUsername } = extractCustomData(payload);
 
         console.log(
-          `[SALE] Order #${orderId} — ${total} by ${customerName} (${email}) — Status: ${status} — Tier: ${tier || "unknown"}`
+          `[SALE] Order #${orderId} — ${total} by ${customerName} (${email}) — Status: ${status} — Tier: ${tier || "unknown"} — GitHub: ${githubUsername || "not provided"}`
         );
 
         // Only grant access on successful payment
@@ -123,9 +130,9 @@ export async function POST(req: NextRequest) {
           const repoName = getRepoForTier(tier);
 
           if (repoName && isGitHubConfigured()) {
-            const result = await inviteCollaborator(repoName, email, "pull");
+            const result = await inviteCollaborator(repoName, email, "pull", githubUsername || undefined);
             console.log(
-              `[DELIVERY] GitHub invite for ${email} to ${repoName}: ${result.success ? "✅" : "❌"} — ${result.message}`
+              `[DELIVERY] GitHub invite for ${githubUsername || email} to ${repoName}: ${result.success ? "✅" : "❌"} — ${result.message}`
             );
           } else if (!repoName) {
             console.warn(
@@ -149,7 +156,7 @@ export async function POST(req: NextRequest) {
         const order = payload.data;
         const email = order.attributes.user_email;
         const orderId = order.id;
-        const tier = extractTier(payload);
+        const { tier } = extractCustomData(payload);
 
         console.log(`[REFUND] Order #${orderId} refunded for ${email} — Tier: ${tier || "unknown"}`);
 
