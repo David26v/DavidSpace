@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { RxCheck, RxCopy, RxRocket, RxDownload, RxLockOpen2, RxExternalLink } from "react-icons/rx";
+import { RxCheck, RxCopy, RxRocket, RxDownload, RxLockOpen2, RxExternalLink, RxPerson, RxLockClosed } from "react-icons/rx";
 import type { LicenseType } from "@/constants/products";
 
 // ─── Tier-specific content ────────────────────────────────────
@@ -222,6 +222,7 @@ function SuccessContent() {
   const params = useSearchParams();
   const sessionId = params.get("session_id") || params.get("order_id");
   const tier = params.get("tier") as LicenseType | null;
+  const githubUsername = params.get("gh");
 
   const content = getTierContent(tier);
   const tierLabel = getTierLabel(tier);
@@ -271,35 +272,153 @@ function SuccessContent() {
             <div>
               <h2 className="text-lg font-semibold text-white">GitHub Repository Access</h2>
               <p className="text-xs text-gray-400">
-                You&apos;ll receive a GitHub invitation to the <strong className="text-[#b49bff]">{content.repoName}</strong> repo within minutes.
+                A GitHub invitation has been sent to{" "}
+                {githubUsername ? (
+                  <strong className="text-[#b49bff]">@{githubUsername}</strong>
+                ) : (
+                  <strong className="text-[#b49bff]">your email</strong>
+                )}{" "}
+                for the <strong className="text-[#b49bff]">{content.repoName}</strong> repo.
               </p>
             </div>
           </div>
 
-          <div className="space-y-4">
-            {/* Step-by-step delivery */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-xl p-4 text-center">
-                <div className="text-2xl mb-2">📧</div>
-                <p className="text-xs font-semibold text-white mb-1">Step 1</p>
-                <p className="text-[11px] text-gray-400">Check your email for a GitHub invitation</p>
+          <div className="space-y-5">
+            {/* GitHub Invitation Preview Card */}
+            <div className="rounded-xl border border-[#30363d] bg-[#0d1117] overflow-hidden">
+              {/* Avatars */}
+              <div className="flex items-center justify-center gap-3 pt-6 pb-4">
+                {/* Owner avatar */}
+                <img
+                  src="https://github.com/David26v.png"
+                  alt="David26v"
+                  className="w-12 h-12 rounded-full border-2 border-[#30363d]"
+                />
+                <span className="text-gray-500 text-lg">+</span>
+                {/* Buyer avatar */}
+                {githubUsername ? (
+                  <img
+                    src={`https://github.com/${githubUsername}.png`}
+                    alt={githubUsername}
+                    className="w-12 h-12 rounded-full border-2 border-[#30363d]"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full border-2 border-[#30363d] bg-[#161b22] flex items-center justify-center text-gray-500">
+                    <RxPerson className="w-6 h-6" />
+                  </div>
+                )}
               </div>
-              <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-xl p-4 text-center">
-                <div className="text-2xl mb-2">✅</div>
-                <p className="text-xs font-semibold text-white mb-1">Step 2</p>
-                <p className="text-[11px] text-gray-400">Accept the invite to get repo access</p>
+
+              {/* Invitation text */}
+              <div className="text-center px-6 pb-4">
+                <p className="text-white text-sm">
+                  <a
+                    href="https://github.com/David26v"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#58a6ff] font-semibold hover:underline"
+                  >
+                    David26v
+                  </a>{" "}
+                  invited {githubUsername ? (
+                    <span className="font-semibold">@{githubUsername}</span>
+                  ) : (
+                    <span className="font-semibold">you</span>
+                  )} to collaborate on
+                </p>
+                <p className="text-[#58a6ff] font-semibold text-sm">
+                  David26v/{content.repoName}
+                </p>
               </div>
-              <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-xl p-4 text-center">
-                <div className="text-2xl mb-2">🚀</div>
-                <p className="text-xs font-semibold text-white mb-1">Step 3</p>
-                <p className="text-[11px] text-gray-400">Clone the repo and start building</p>
+
+              {/* Action buttons */}
+              <div className="flex items-center justify-center gap-3 pb-5">
+                <a
+                  href={`https://github.com/David26v/${content.repoName}/invitations`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-1.5 rounded-md bg-[#238636] text-white text-sm font-medium hover:bg-[#2ea043] transition-colors border border-[#2ea043]/50"
+                >
+                  Accept invitation
+                </a>
+                <button
+                  className="px-5 py-1.5 rounded-md bg-[#21262d] text-gray-300 text-sm font-medium border border-[#30363d] hover:bg-[#30363d] transition-colors cursor-default"
+                  disabled
+                >
+                  Decline invitation
+                </button>
+              </div>
+
+              {/* Privacy note */}
+              <div className="border-t border-[#21262d] px-6 py-3 text-xs text-gray-500">
+                <p className="flex items-center gap-1.5">
+                  <RxLockClosed className="w-3 h-3" />
+                  Owners of {content.repoName} will be able to see your public profile information
+                </p>
               </div>
             </div>
 
+            {/* Steps to get the repo */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-white">How to access your repo:</h3>
+
+              <div className="flex gap-3 items-start">
+                <div className="w-7 h-7 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold text-[#b49bff] flex-shrink-0 mt-0.5">1</div>
+                <div>
+                  <p className="text-sm text-white font-medium">Check your GitHub notifications</p>
+                  <p className="text-xs text-gray-400">
+                    Go to{" "}
+                    <a href="https://github.com/notifications" target="_blank" rel="noopener noreferrer" className="text-[#58a6ff] hover:underline">
+                      github.com/notifications
+                    </a>{" "}
+                    or check the email linked to your GitHub account.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start">
+                <div className="w-7 h-7 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold text-[#b49bff] flex-shrink-0 mt-0.5">2</div>
+                <div>
+                  <p className="text-sm text-white font-medium">Accept the invitation</p>
+                  <p className="text-xs text-gray-400">
+                    Click the green &quot;Accept invitation&quot; button above, or accept it from the GitHub notification.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start">
+                <div className="w-7 h-7 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold text-[#b49bff] flex-shrink-0 mt-0.5">3</div>
+                <div>
+                  <p className="text-sm text-white font-medium">Clone the repository</p>
+                  <p className="text-xs text-gray-400">
+                    After accepting, clone it to your machine:
+                  </p>
+                  <div className="mt-2">
+                    <CopyBlock code={`git clone ${content.repoUrl}`} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start">
+                <div className="w-7 h-7 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold text-[#b49bff] flex-shrink-0 mt-0.5">4</div>
+                <div>
+                  <p className="text-sm text-white font-medium">Install & run</p>
+                  <p className="text-xs text-gray-400">Follow the setup guide below to get up and running.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Warning note */}
             <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4 text-sm text-yellow-200/80">
-              <strong className="text-yellow-300">Check your email!</strong> Look for a GitHub invitation from{" "}
-              <span className="font-medium text-yellow-300">David26v</span>.
-              Also check your spam folder. The invite expires in 7 days.
+              <strong className="text-yellow-300">Don&apos;t see the invitation?</strong> Check your spam folder, or go directly to{" "}
+              <a
+                href={`https://github.com/David26v/${content.repoName}/invitations`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-yellow-300 underline hover:text-yellow-200"
+              >
+                github.com/David26v/{content.repoName}/invitations
+              </a>. The invite expires in 7 days.
             </div>
 
             {/* Direct repo link */}

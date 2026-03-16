@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
     }
 
     const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const successUrl = `${origin}/store/success?tier=${license}`;
+    const ghUser = githubUsername ? `&gh=${encodeURIComponent(githubUsername)}` : "";
+    const successUrl = `${origin}/store/success?tier=${license}${ghUser}`;
     const plan = license as Exclude<LicenseType, "custom">;
 
     // Strategy 1: API-based checkout (preferred — uses variant IDs)
