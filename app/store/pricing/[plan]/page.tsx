@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import {
   RxCheck,
@@ -31,6 +31,7 @@ import {
   PRODUCTS,
   licenseInfo,
   planDetails,
+  planQA,
   type LicenseType,
 } from "@/constants/products";
 
@@ -71,6 +72,38 @@ function getFeatureIcon(title: string) {
     f.keywords.some((kw) => lower.includes(kw))
   );
   return match || { icon: <RxRocket className="w-6 h-6" />, color: "text-[#b49bff]", bg: "bg-[#7042f8]/10 border-[#7042f8]/20" };
+}
+
+function QAItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border border-[#2A0E61]/30 rounded-xl overflow-hidden transition-colors hover:border-[#7042f8]/30">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between gap-4 p-5 text-left"
+      >
+        <span className="text-sm font-medium text-white">{question}</span>
+        <svg
+          className={`w-5 h-5 text-[#b49bff] flex-shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div
+        className={`grid transition-all duration-300 ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          <p className="px-5 pb-5 text-sm text-gray-400 leading-relaxed">
+            {answer}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function formatPrice(cents: number) {
@@ -343,6 +376,27 @@ export default function PlanDetailPage() {
             </div>
           )}
         </div>
+
+        {/* ═══════════ Q&A ═══════════ */}
+        {planQA[planId] && planQA[planId].length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-xl font-bold text-white mb-2">
+              Questions & Answers
+            </h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Common questions about the {info.name} plan
+            </p>
+            <div className="space-y-3">
+              {planQA[planId].map((qa) => (
+                <QAItem
+                  key={qa.question}
+                  question={qa.question}
+                  answer={qa.answer}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ═══════════ Get Started / Checkout ═══════════ */}
         <div id="get-started" className="mb-12">

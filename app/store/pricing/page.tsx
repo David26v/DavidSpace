@@ -385,7 +385,7 @@ export default function PricingPage() {
                   { feature: "White-label rights", student: false, starter: false, pro: true, enterprise: true },
                   { feature: "Unlimited projects", student: false, starter: false, pro: true, enterprise: true },
                   { feature: "SaaS & resale allowed", student: false, starter: false, pro: true, enterprise: true },
-                  { feature: "Custom feature development", student: false, starter: false, pro: false, enterprise: "20 hrs" },
+                  { feature: "Custom feature development", student: false, starter: false, pro: false, enterprise: "30 hrs" },
                   { feature: "1-on-1 architecture review", student: false, starter: false, pro: false, enterprise: true },
                   { feature: "Dedicated onboarding session", student: false, starter: false, pro: false, enterprise: true },
                   { feature: "Priority bug fixes", student: false, starter: false, pro: false, enterprise: true },

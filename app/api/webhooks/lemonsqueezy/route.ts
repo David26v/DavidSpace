@@ -3,8 +3,10 @@ import crypto from "crypto";
 import {
   inviteCollaborator,
   removeCollaborator,
+  getRepoForTier,
   isGitHubConfigured,
 } from "@/utils/github";
+import type { LicenseType } from "@/constants/products";
 
 /**
  * Lemon Squeezy Webhook Handler
@@ -14,9 +16,63 @@ import {
  * - Events: order_created, order_refunded, license_key_created
  * - Signing secret → paste into LEMONSQUEEZY_WEBHOOK_SECRET in .env
  *
- * On purchase: auto-invites the buyer to the private GitHub SDK repo
- * On refund:   removes their GitHub access
+ * On purchase: auto-invites the buyer to the correct tier-specific GitHub repo
+ *   Student    → SDK-Student
+ *   Starter    → SDK-Starter
+ *   Pro        → SDK-Pro
+ *   Enterprise → SDK-Pro (same code + services)
+ *
+ * On refund: removes their GitHub access
  */
+
+// ─── Tier Detection ─────────────────────────────────────
+
+/**
+ * Map Lemon Squeezy variant IDs to license tiers.
+ */
+function getTierFromVariant(variantId: string): LicenseType | null {
+  const variantMap: Record<string, LicenseType> = {};
+
+  if (process.env.LS_VARIANT_STUDENT) variantMap[process.env.LS_VARIANT_STUDENT] = "student";
+  if (process.env.LS_VARIANT_STARTER) variantMap[process.env.LS_VARIANT_STARTER] = "starter";
+  if (process.env.LS_VARIANT_PRO) variantMap[process.env.LS_VARIANT_PRO] = "pro";
+  if (process.env.LS_VARIANT_ENTERPRISE) variantMap[process.env.LS_VARIANT_ENTERPRISE] = "enterprise";
+
+  return variantMap[variantId] || null;
+}
+
+/**
+ * Extract tier from webhook payload.
+ * Tries: custom data → variant ID → null
+ */
+function extractTier(payload: Record<string, unknown>): LicenseType | null {
+  // Try custom data first (set during checkout)
+  const meta = payload.meta as Record<string, unknown> | undefined;
+  const customData = (meta?.custom_data || {}) as Record<string, string>;
+  if (customData.license_tier) {
+    const tier = customData.license_tier;
+    if (["student", "starter", "pro", "enterprise"].includes(tier)) {
+      return tier as LicenseType;
+    }
+  }
+
+  // Fallback: try variant ID from order data
+  const data = payload.data as Record<string, unknown> | undefined;
+  const attrs = (data?.attributes || {}) as Record<string, unknown>;
+  const firstItem = (attrs.first_order_item || {}) as Record<string, unknown>;
+  const variantId =
+    firstItem.variant_id?.toString() ||
+    attrs.variant_id?.toString();
+
+  if (variantId) {
+    return getTierFromVariant(variantId);
+  }
+
+  return null;
+}
+
+// ─── Webhook Handler ────────────────────────────────────
+
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = req.headers.get("x-signature");
@@ -56,37 +112,35 @@ export async function POST(req: NextRequest) {
         const status = attrs.status;
         const orderId = order.id;
         const customerName = attrs.user_name || "Customer";
+        const tier = extractTier(payload);
 
         console.log(
-          `[SALE] Order #${orderId} — ${total} by ${customerName} (${email}) — Status: ${status}`
+          `[SALE] Order #${orderId} — ${total} by ${customerName} (${email}) — Status: ${status} — Tier: ${tier || "unknown"}`
         );
 
         // Only grant access on successful payment
-        if (status === "paid") {
-          // Auto-invite buyer to private GitHub repo
-          if (isGitHubConfigured()) {
-            const result = await inviteCollaborator(email, "pull");
+        if (status === "paid" && tier) {
+          const repoName = getRepoForTier(tier);
+
+          if (repoName && isGitHubConfigured()) {
+            const result = await inviteCollaborator(repoName, email, "pull");
             console.log(
-              `[DELIVERY] GitHub invite for ${email}: ${result.success ? "✅" : "❌"} — ${result.message}`
+              `[DELIVERY] GitHub invite for ${email} to ${repoName}: ${result.success ? "✅" : "❌"} — ${result.message}`
+            );
+          } else if (!repoName) {
+            console.warn(
+              `[DELIVERY] No GitHub repo configured for tier "${tier}". Set GITHUB_REPO_${tier.toUpperCase()} in .env`
             );
           } else {
             console.warn(
               "[DELIVERY] GitHub not configured — skipping auto-invite. Set GITHUB_TOKEN in .env"
             );
           }
+        } else if (status === "paid" && !tier) {
+          console.warn(
+            `[DELIVERY] Could not determine tier for order #${orderId}. Check LS_VARIANT_* and checkout custom data.`
+          );
         }
-
-        // TODO: Save order to database
-        // await prisma.order.create({
-        //   data: {
-        //     email,
-        //     orderId: orderId,
-        //     amount: attrs.total,
-        //     status: status === "paid" ? "COMPLETED" : "PENDING",
-        //     provider: "lemonsqueezy",
-        //     customerName,
-        //   },
-        // });
 
         break;
       }
@@ -95,22 +149,37 @@ export async function POST(req: NextRequest) {
         const order = payload.data;
         const email = order.attributes.user_email;
         const orderId = order.id;
+        const tier = extractTier(payload);
 
-        console.log(`[REFUND] Order #${orderId} refunded for ${email}`);
+        console.log(`[REFUND] Order #${orderId} refunded for ${email} — Tier: ${tier || "unknown"}`);
 
         // Revoke GitHub access on refund
         if (isGitHubConfigured()) {
-          const result = await removeCollaborator(email);
-          console.log(
-            `[REVOKE] GitHub access for ${email}: ${result.success ? "✅ Removed" : "⚠️ " + result.message}`
-          );
-        }
+          if (tier) {
+            const repoName = getRepoForTier(tier);
+            if (repoName) {
+              const result = await removeCollaborator(repoName, email);
+              console.log(
+                `[REVOKE] GitHub access for ${email} on ${repoName}: ${result.success ? "✅ Removed" : "⚠️ " + result.message}`
+              );
+            }
+          } else {
+            // Unknown tier — remove from all repos to be safe
+            console.log(`[REVOKE] Unknown tier — removing ${email} from all repos...`);
+            const allRepos = [
+              process.env.GITHUB_REPO_STUDENT,
+              process.env.GITHUB_REPO_STARTER,
+              process.env.GITHUB_REPO_PRO,
+            ].filter(Boolean) as string[];
 
-        // TODO: Update order status in database
-        // await prisma.order.update({
-        //   where: { orderId },
-        //   data: { status: "REFUNDED" },
-        // });
+            for (const repo of allRepos) {
+              const result = await removeCollaborator(repo, email);
+              if (result.success) {
+                console.log(`[REVOKE] Removed ${email} from ${repo}`);
+              }
+            }
+          }
+        }
 
         break;
       }

@@ -2,12 +2,12 @@ export const Socials = [
   {
     name: "Discord",
     src: "/discord.svg",
-    link: "https://discord.com",
+    link: "https://discord.com/users/vid_fj26",
   },
   {
     name: "Instagram",
     src: "/instagram.svg",
-    link: "https://www.instagram.com/vid_26.fajardo/",
+    link: "https://www.instagram.com/vid_fj26",
   },
 ];
 

@@ -1,8 +1,14 @@
 /**
  * GitHub Repository Access Management
  *
- * Handles inviting/removing collaborators from the private SDK repo
+ * Handles inviting/removing collaborators from tier-specific private SDK repos
  * after Lemon Squeezy purchase/refund events.
+ *
+ * Tier → Repo mapping:
+ *   Student    → GITHUB_REPO_STUDENT  (SDK-Student)
+ *   Starter    → GITHUB_REPO_STARTER  (SDK-Starter)
+ *   Pro        → GITHUB_REPO_PRO      (SDK-Pro)
+ *   Enterprise → GITHUB_REPO_PRO      (same code as Pro + services)
  *
  * Setup:
  * 1. Create a GitHub Personal Access Token (classic) at:
@@ -11,21 +17,39 @@
  * 3. Add to .env:
  *    GITHUB_TOKEN="ghp_your_token_here"
  *    GITHUB_REPO_OWNER="David26v"
- *    GITHUB_REPO_NAME="TurboRepoSDKSale"
+ *    GITHUB_REPO_STUDENT="SDK-Student"
+ *    GITHUB_REPO_STARTER="SDK-Starter"
+ *    GITHUB_REPO_PRO="SDK-Pro"
  */
+
+import type { LicenseType } from "@/constants/products";
 
 const GITHUB_API = "https://api.github.com";
 
-function getConfig() {
+function getBaseConfig() {
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_REPO_OWNER;
-  const repo = process.env.GITHUB_REPO_NAME;
 
-  if (!token || !owner || !repo) {
+  if (!token || !owner) {
     return null;
   }
 
-  return { token, owner, repo };
+  return { token, owner };
+}
+
+/**
+ * Map a license tier to its corresponding GitHub repo name.
+ * Enterprise buyers get the same repo as Pro (code is identical).
+ */
+export function getRepoForTier(tier: LicenseType): string | null {
+  const repoMap: Record<string, string | undefined> = {
+    student: process.env.GITHUB_REPO_STUDENT,
+    starter: process.env.GITHUB_REPO_STARTER,
+    pro: process.env.GITHUB_REPO_PRO,
+    enterprise: process.env.GITHUB_REPO_PRO, // same code as Pro
+  };
+
+  return repoMap[tier] || null;
 }
 
 function headers(token: string) {
@@ -40,7 +64,7 @@ function headers(token: string) {
  * Check if GitHub delivery is configured
  */
 export function isGitHubConfigured(): boolean {
-  return getConfig() !== null;
+  return getBaseConfig() !== null;
 }
 
 /**
@@ -53,7 +77,7 @@ export function isGitHubConfigured(): boolean {
 export async function findGitHubUser(
   email: string
 ): Promise<string | null> {
-  const config = getConfig();
+  const config = getBaseConfig();
   if (!config) return null;
 
   try {
@@ -77,25 +101,31 @@ export async function findGitHubUser(
 }
 
 /**
- * Invite a user as a collaborator to the SDK repo.
+ * Invite a user as a collaborator to a specific repo.
+ *
+ * @param repoName - The repo name (e.g., "SDK-Student")
+ * @param email - Buyer's email
+ * @param permission - Access level (default: "pull" = read-only)
  *
  * Tries by GitHub username first, falls back to email-based invitation.
- * Returns { success, method, message }
+ * Returns { success, method, message, repoName }
  */
 export async function inviteCollaborator(
+  repoName: string,
   email: string,
   permission: "pull" | "push" = "pull"
-): Promise<{ success: boolean; method: string; message: string }> {
-  const config = getConfig();
+): Promise<{ success: boolean; method: string; message: string; repoName: string }> {
+  const config = getBaseConfig();
   if (!config) {
     return {
       success: false,
       method: "none",
-      message: "GitHub integration not configured. Set GITHUB_TOKEN, GITHUB_REPO_OWNER, GITHUB_REPO_NAME in .env",
+      repoName,
+      message: "GitHub integration not configured. Set GITHUB_TOKEN and GITHUB_REPO_OWNER in .env",
     };
   }
 
-  const { token, owner, repo } = config;
+  const { token, owner } = config;
 
   // Step 1: Try to find the GitHub username by email
   const username = await findGitHubUser(email);
@@ -104,7 +134,7 @@ export async function inviteCollaborator(
     // Invite by username (most reliable)
     try {
       const res = await fetch(
-        `${GITHUB_API}/repos/${owner}/${repo}/collaborators/${username}`,
+        `${GITHUB_API}/repos/${owner}/${repoName}/collaborators/${username}`,
         {
           method: "PUT",
           headers: headers(token),
@@ -113,28 +143,28 @@ export async function inviteCollaborator(
       );
 
       if (res.status === 201) {
-        // Invitation sent
-        console.log(`[GitHub] Invitation sent to @${username} (${email}) — ${permission} access`);
+        console.log(`[GitHub] Invitation sent to @${username} (${email}) for ${owner}/${repoName} — ${permission} access`);
         return {
           success: true,
           method: "username",
-          message: `GitHub invitation sent to @${username}`,
+          repoName,
+          message: `GitHub invitation sent to @${username} for ${repoName}`,
         };
       } else if (res.status === 204) {
-        // User is already a collaborator
-        console.log(`[GitHub] @${username} (${email}) is already a collaborator`);
+        console.log(`[GitHub] @${username} (${email}) is already a collaborator on ${repoName}`);
         return {
           success: true,
           method: "username",
-          message: `@${username} already has access`,
+          repoName,
+          message: `@${username} already has access to ${repoName}`,
         };
       } else {
         const errText = await res.text();
-        console.error(`[GitHub] Failed to invite @${username}: ${res.status} ${errText}`);
+        console.error(`[GitHub] Failed to invite @${username} to ${repoName}: ${res.status} ${errText}`);
         // Fall through to email method
       }
     } catch (err) {
-      console.error(`[GitHub] Error inviting @${username}:`, err);
+      console.error(`[GitHub] Error inviting @${username} to ${repoName}:`, err);
       // Fall through to email method
     }
   }
@@ -142,7 +172,7 @@ export async function inviteCollaborator(
   // Step 2: Invite by email (works even if user doesn't have a GitHub account yet)
   try {
     const res = await fetch(
-      `${GITHUB_API}/repos/${owner}/${repo}/invitations`,
+      `${GITHUB_API}/repos/${owner}/${repoName}/invitations`,
       {
         method: "POST",
         headers: headers(token),
@@ -153,56 +183,63 @@ export async function inviteCollaborator(
       }
     );
 
-    // GitHub may return 201 (created) or 422 (already invited/collaborator)
     if (res.status === 201) {
-      console.log(`[GitHub] Email invitation sent to ${email} — ${permission} access`);
+      console.log(`[GitHub] Email invitation sent to ${email} for ${repoName} — ${permission} access`);
       return {
         success: true,
         method: "email",
-        message: `GitHub invitation sent to ${email}. They'll receive an email to accept.`,
+        repoName,
+        message: `GitHub invitation sent to ${email} for ${repoName}. They'll receive an email to accept.`,
       };
     } else if (res.status === 422) {
       const data = await res.json();
       const errMsg = data.message || "Already invited";
-      console.log(`[GitHub] ${email} — ${errMsg}`);
+      console.log(`[GitHub] ${email} for ${repoName} — ${errMsg}`);
       return {
         success: true,
         method: "email",
-        message: `${email} already has a pending invitation or access`,
+        repoName,
+        message: `${email} already has a pending invitation or access to ${repoName}`,
       };
     } else {
       const errText = await res.text();
-      console.error(`[GitHub] Email invite failed: ${res.status} ${errText}`);
+      console.error(`[GitHub] Email invite failed for ${repoName}: ${res.status} ${errText}`);
       return {
         success: false,
         method: "email",
+        repoName,
         message: `Failed to send invitation: ${res.status}`,
       };
     }
   } catch (err) {
-    console.error("[GitHub] Error sending email invite:", err);
+    console.error(`[GitHub] Error sending email invite to ${repoName}:`, err);
     return {
       success: false,
       method: "email",
+      repoName,
       message: `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
     };
   }
 }
 
 /**
- * Remove a collaborator from the SDK repo (used on refund).
+ * Remove a collaborator from a specific repo (used on refund).
+ *
+ * @param repoName - The repo name (e.g., "SDK-Student")
+ * @param email - Buyer's email
  *
  * Tries by username lookup first, then cancels any pending invitations by email.
  */
 export async function removeCollaborator(
+  repoName: string,
   email: string
 ): Promise<{ success: boolean; message: string }> {
-  const config = getConfig();
+  const config = getBaseConfig();
   if (!config) {
     return { success: false, message: "GitHub integration not configured" };
   }
 
-  const { token, owner, repo } = config;
+  const { token, owner } = config;
   let removed = false;
 
   // Step 1: Try to remove by username
@@ -210,23 +247,23 @@ export async function removeCollaborator(
   if (username) {
     try {
       const res = await fetch(
-        `${GITHUB_API}/repos/${owner}/${repo}/collaborators/${username}`,
+        `${GITHUB_API}/repos/${owner}/${repoName}/collaborators/${username}`,
         { method: "DELETE", headers: headers(token) }
       );
 
       if (res.status === 204) {
-        console.log(`[GitHub] Removed @${username} (${email}) from repo`);
+        console.log(`[GitHub] Removed @${username} (${email}) from ${repoName}`);
         removed = true;
       }
     } catch (err) {
-      console.error(`[GitHub] Error removing @${username}:`, err);
+      console.error(`[GitHub] Error removing @${username} from ${repoName}:`, err);
     }
   }
 
   // Step 2: Also cancel any pending invitations
   try {
     const res = await fetch(
-      `${GITHUB_API}/repos/${owner}/${repo}/invitations`,
+      `${GITHUB_API}/repos/${owner}/${repoName}/invitations`,
       { headers: headers(token) }
     );
 
@@ -241,27 +278,27 @@ export async function removeCollaborator(
           (username && inviteeLogin === username)
         ) {
           const delRes = await fetch(
-            `${GITHUB_API}/repos/${owner}/${repo}/invitations/${invite.id}`,
+            `${GITHUB_API}/repos/${owner}/${repoName}/invitations/${invite.id}`,
             { method: "DELETE", headers: headers(token) }
           );
 
           if (delRes.status === 204) {
-            console.log(`[GitHub] Cancelled pending invitation for ${email}`);
+            console.log(`[GitHub] Cancelled pending invitation for ${email} on ${repoName}`);
             removed = true;
           }
         }
       }
     }
   } catch (err) {
-    console.error("[GitHub] Error cancelling invitations:", err);
+    console.error(`[GitHub] Error cancelling invitations on ${repoName}:`, err);
   }
 
   if (removed) {
-    return { success: true, message: `Access revoked for ${email}` };
+    return { success: true, message: `Access revoked for ${email} on ${repoName}` };
   }
 
   return {
     success: false,
-    message: `Could not find ${email} as collaborator or pending invite`,
+    message: `Could not find ${email} as collaborator or pending invite on ${repoName}`,
   };
 }

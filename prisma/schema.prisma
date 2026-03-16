@@ -1022,3 +1022,45 @@ enum OrderStatus {
   EXPIRED
   REQUIRES_ACTION
 }
+
+// ─── SDK Product Orders & Licenses ──────────────────────
+
+model ProductOrder {
+  id                  String          @id @default(cuid())
+  lemonSqueezyOrderId String          @unique
+  customerEmail       String
+  customerName        String?
+  licenseType         String          // "student" | "starter" | "pro" | "enterprise"
+  amountCents         Int
+  status              String          @default("PENDING") // PENDING, COMPLETED, REFUNDED
+  githubRepo          String?         // which repo they were invited to
+  githubInviteSent    Boolean         @default(false)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  license             ProductLicense?
+
+  @@index([customerEmail])
+  @@index([status])
+  @@index([licenseType])
+}
+
+model ProductLicense {
+  id              String    @id @default(cuid())
+  licenseKey      String    @unique
+  customerEmail   String
+  licenseType     String    // "student" | "starter" | "pro" | "enterprise"
+  orderId         String    @unique
+  lemonSqueezyId  String?   // LS license key ID
+  activationCount Int       @default(0)
+  maxActivations  Int       @default(3)
+  status          String    @default("ACTIVE") // ACTIVE, REVOKED, REFUNDED
+  issuedAt        DateTime  @default(now())
+  revokedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  order           ProductOrder @relation(fields: [orderId], references: [id])
+
+  @@index([licenseKey])
+  @@index([customerEmail])
+  @@index([status])
+}
