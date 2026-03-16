@@ -3,7 +3,188 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { RxCheck, RxCopy, RxRocket, RxDownload, RxLockOpen2 } from "react-icons/rx";
+import { RxCheck, RxCopy, RxRocket, RxDownload, RxLockOpen2, RxExternalLink } from "react-icons/rx";
+import type { LicenseType } from "@/constants/products";
+
+// ─── Tier-specific content ────────────────────────────────────
+
+type TierContent = {
+  repoName: string;
+  repoUrl: string;
+  apps: { name: string; port?: string; description: string }[];
+  packages: { name: string; description: string }[];
+  deployGuides: string[];
+  databases: string;
+  databasePorts: string;
+  envVars: string;
+  cliNote: boolean;
+};
+
+const TIER_CONTENT: Record<string, TierContent> = {
+  student: {
+    repoName: "SDK-Student",
+    repoUrl: "https://github.com/David26v/SDK-Student.git",
+    apps: [
+      { name: "Web App", port: "localhost:3000", description: "Next.js 14 — Main web app" },
+      { name: "API Server", port: "localhost:4000", description: "Hono — REST API" },
+      { name: "Docs", port: "localhost:3003", description: "Fumadocs — Documentation" },
+    ],
+    packages: [
+      { name: "ui", description: "shadcn/ui + Radix + Tailwind components" },
+      { name: "database", description: "Prisma ORM + PostgreSQL" },
+      { name: "auth", description: "NextAuth.js (Google, GitHub, credentials)" },
+      { name: "shared", description: "Zod types, utilities, constants" },
+      { name: "email", description: "Email system (Resend)" },
+      { name: "config-eslint", description: "Shared ESLint config" },
+      { name: "config-typescript", description: "Shared TypeScript config" },
+    ],
+    deployGuides: ["Vercel", "Docker"],
+    databases: "PostgreSQL",
+    databasePorts: "PostgreSQL (5432), pgAdmin (5050), Mailpit (8025)",
+    envVars: `DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret"
+NEXTAUTH_URL="http://localhost:3000"
+
+# OAuth Providers
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."`,
+    cliNote: false,
+  },
+  starter: {
+    repoName: "SDK-Starter",
+    repoUrl: "https://github.com/David26v/SDK-Starter.git",
+    apps: [
+      { name: "Web App", port: "localhost:3000", description: "Next.js 14 — Main web app" },
+      { name: "API Server", port: "localhost:4000", description: "Hono — REST API" },
+      { name: "Mobile", port: "localhost:3001", description: "Capacitor.js — iOS & Android" },
+      { name: "Docs", port: "localhost:3003", description: "Fumadocs — Documentation" },
+    ],
+    packages: [
+      { name: "ui", description: "shadcn/ui + Radix + Tailwind components" },
+      { name: "database", description: "Prisma ORM + PostgreSQL" },
+      { name: "auth", description: "NextAuth.js (Google, GitHub, credentials)" },
+      { name: "shared", description: "Zod types, utilities, constants" },
+      { name: "email", description: "Email system (Resend)" },
+      { name: "config-eslint", description: "Shared ESLint config" },
+      { name: "config-typescript", description: "Shared TypeScript config" },
+      { name: "payments", description: "Stripe subscriptions, checkout, webhooks" },
+      { name: "storage", description: "Vercel Blob / S3 / Cloudflare R2" },
+      { name: "ai", description: "OpenAI, Anthropic, Google AI" },
+      { name: "seo", description: "SEO meta tags, Open Graph, JSON-LD" },
+      { name: "sdk-cli", description: "CLI scaffolding tool" },
+      { name: "security", description: "Security utilities, rate limiting" },
+    ],
+    deployGuides: ["Vercel", "Docker", "Railway", "Render"],
+    databases: "PostgreSQL, Redis",
+    databasePorts: "PostgreSQL (5432), Redis (6379), pgAdmin (5050), Mailpit (8025)",
+    envVars: `DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Stripe Payments
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+
+# AI (optional)
+OPENAI_API_KEY="..."
+ANTHROPIC_API_KEY="..."
+
+# OAuth Providers
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+
+# Storage
+BLOB_READ_WRITE_TOKEN="..."`,
+    cliNote: true,
+  },
+  pro: {
+    repoName: "SDK-Pro",
+    repoUrl: "https://github.com/David26v/SDK-Pro.git",
+    apps: [
+      { name: "Web App", port: "localhost:3000", description: "Next.js 14 — Main web app" },
+      { name: "API Server", port: "localhost:4000", description: "Hono — REST API" },
+      { name: "Mobile", port: "localhost:3001", description: "Capacitor.js — iOS & Android" },
+      { name: "Desktop", description: "Electron — macOS, Windows, Linux" },
+      { name: "Admin", port: "localhost:3002", description: "Admin dashboard" },
+      { name: "Docs", port: "localhost:3003", description: "Fumadocs — Documentation" },
+    ],
+    packages: [
+      { name: "ui", description: "shadcn/ui + Radix + Tailwind components" },
+      { name: "database", description: "Prisma ORM + PostgreSQL" },
+      { name: "auth", description: "NextAuth.js (Google, GitHub, credentials)" },
+      { name: "shared", description: "Zod types, utilities, constants" },
+      { name: "email", description: "Resend, Nodemailer, SendGrid" },
+      { name: "config-eslint", description: "Shared ESLint config" },
+      { name: "config-typescript", description: "Shared TypeScript config" },
+      { name: "payments", description: "Stripe subscriptions, checkout, webhooks" },
+      { name: "storage", description: "Vercel Blob / S3 / Cloudflare R2" },
+      { name: "ai", description: "OpenAI, Anthropic, Google AI" },
+      { name: "seo", description: "SEO meta tags, Open Graph, JSON-LD" },
+      { name: "sdk-cli", description: "CLI scaffolding tool" },
+      { name: "security", description: "GeoIP, threat detection, brute force" },
+      { name: "monitoring", description: "Error tracking & performance" },
+      { name: "nosql", description: "MongoDB/Mongoose" },
+      { name: "notifications", description: "In-app notification system" },
+      { name: "realtime", description: "Socket.io WebSocket support" },
+    ],
+    deployGuides: ["Vercel", "Docker", "Railway", "Render", "AWS", "GCP", "Kubernetes"],
+    databases: "PostgreSQL, MongoDB, Redis",
+    databasePorts: "PostgreSQL (5432), MongoDB (27017), Redis (6379), pgAdmin (5050), Mongo Express (8081), Mailpit (8025)",
+    envVars: `DATABASE_URL="postgresql://..."
+MONGODB_URI="mongodb://localhost:27017/launchkit"
+REDIS_URL="redis://localhost:6379"
+NEXTAUTH_SECRET="your-secret"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Stripe Payments
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+
+# AI
+OPENAI_API_KEY="..."
+ANTHROPIC_API_KEY="..."
+GOOGLE_AI_API_KEY="..."
+
+# OAuth Providers
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+
+# Storage
+BLOB_READ_WRITE_TOKEN="..."
+
+# Monitoring (optional)
+SENTRY_DSN="..."`,
+    cliNote: true,
+  },
+};
+
+// Enterprise uses the same repo as Pro
+TIER_CONTENT.enterprise = { ...TIER_CONTENT.pro, repoName: "SDK-Pro", repoUrl: "https://github.com/David26v/SDK-Pro.git" };
+
+function getTierContent(tier: string | null): TierContent {
+  if (tier && TIER_CONTENT[tier]) return TIER_CONTENT[tier];
+  return TIER_CONTENT.pro; // fallback
+}
+
+function getTierLabel(tier: string | null): string {
+  const labels: Record<string, string> = {
+    student: "Student",
+    starter: "Starter",
+    pro: "Pro",
+    enterprise: "Enterprise",
+  };
+  return tier && labels[tier] ? labels[tier] : "Pro";
+}
+
+// ─── Components ────────────────────────────────────────────
 
 function CopyBlock({ code, label }: { code: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -40,6 +221,10 @@ function CopyBlock({ code, label }: { code: string; label?: string }) {
 function SuccessContent() {
   const params = useSearchParams();
   const sessionId = params.get("session_id") || params.get("order_id");
+  const tier = params.get("tier") as LicenseType | null;
+
+  const content = getTierContent(tier);
+  const tierLabel = getTierLabel(tier);
 
   return (
     <div className="relative min-h-screen bg-[#030014] text-white pt-[80px] pb-24 md:pb-12">
@@ -68,7 +253,7 @@ function SuccessContent() {
             </span>
           </h1>
           <p className="text-gray-300 max-w-lg mx-auto">
-            Thank you for your purchase! Follow the instructions below to get started with your SDK-TURBOREPO-STARTUP-EDITION template.
+            Thank you for purchasing the <strong className="text-white">{tierLabel} Plan</strong>! Follow the instructions below to get started with your SDK.
           </p>
           {sessionId && (
             <p className="text-xs text-gray-600 mt-2">
@@ -86,7 +271,7 @@ function SuccessContent() {
             <div>
               <h2 className="text-lg font-semibold text-white">GitHub Repository Access</h2>
               <p className="text-xs text-gray-400">
-                You&apos;ll receive a GitHub invitation to the private SDK repo within minutes.
+                You&apos;ll receive a GitHub invitation to the <strong className="text-[#b49bff]">{content.repoName}</strong> repo within minutes.
               </p>
             </div>
           </div>
@@ -117,17 +302,19 @@ function SuccessContent() {
               Also check your spam folder. The invite expires in 7 days.
             </div>
 
-            <div className="bg-[#7042f8]/5 border border-[#7042f8]/20 rounded-xl p-4 text-sm text-gray-300">
-              <div className="flex items-start gap-2">
-                <RxDownload className="w-4 h-4 text-[#b49bff] mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="font-medium text-white text-sm mb-1">Why GitHub?</p>
-                  <p className="text-xs text-gray-400">
-                    You get automatic access to all future updates — every time we push improvements, you&apos;ll have them instantly. No need to re-download ZIP files.
-                  </p>
-                </div>
+            {/* Direct repo link */}
+            <a
+              href={`https://github.com/David26v/${content.repoName}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-3 bg-[#7042f8]/10 border border-[#7042f8]/30 rounded-xl p-4 hover:bg-[#7042f8]/20 transition-colors group"
+            >
+              <div>
+                <p className="text-sm font-semibold text-white">Your Repository</p>
+                <p className="text-xs text-gray-400 font-mono">github.com/David26v/{content.repoName}</p>
               </div>
-            </div>
+              <RxExternalLink className="w-5 h-5 text-[#b49bff] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
           </div>
         </div>
 
@@ -138,26 +325,22 @@ function SuccessContent() {
               <RxRocket className="w-5 h-5" />
             </div>
             <h2 className="text-lg font-semibold text-white">
-              Getting Started — SDK-TURBOREPO-STARTUP-EDITION
+              Getting Started — {tierLabel} Plan
             </h2>
           </div>
 
           <div className="space-y-8">
-            {/* Step 1 */}
+            {/* Step 1 — Prerequisites */}
             <div>
               <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  1
-                </span>
+                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">1</span>
                 Prerequisites
               </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Make sure you have these installed on your machine:
-              </p>
+              <p className="text-sm text-gray-400 mb-3">Make sure you have these installed:</p>
               <ul className="space-y-1.5 text-sm text-gray-300">
                 <li className="flex items-start gap-2">
                   <RxCheck className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Node.js 18+</strong> — <code className="text-[#b49bff] text-xs bg-[#7042f8]/10 px-1.5 py-0.5 rounded">node -v</code></span>
+                  <span><strong>Node.js 20+</strong> — <code className="text-[#b49bff] text-xs bg-[#7042f8]/10 px-1.5 py-0.5 rounded">node -v</code></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <RxCheck className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
@@ -165,7 +348,7 @@ function SuccessContent() {
                 </li>
                 <li className="flex items-start gap-2">
                   <RxCheck className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Docker & Docker Compose</strong> — for local databases (PostgreSQL, MongoDB, Redis)</span>
+                  <span><strong>Docker & Docker Compose</strong> — for local {content.databases}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <RxCheck className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
@@ -174,86 +357,52 @@ function SuccessContent() {
               </ul>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2 — Clone & Install */}
             <div>
               <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  2
-                </span>
+                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">2</span>
                 Clone & Install
               </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                After accepting the GitHub invitation, clone the repo and install dependencies:
-              </p>
+              <p className="text-sm text-gray-400 mb-3">After accepting the GitHub invitation:</p>
               <div className="space-y-2">
-                <CopyBlock code="git clone https://github.com/David26v/TurboRepoSDKSale.git" label="Clone the repo" />
-                <CopyBlock code="cd TurboRepoSDKSale" label="Enter the project" />
+                <CopyBlock code={`git clone ${content.repoUrl}`} label="Clone the repo" />
+                <CopyBlock code={`cd ${content.repoName}`} label="Enter the project" />
                 <CopyBlock code="pnpm install" label="Install all dependencies" />
               </div>
             </div>
 
-            {/* Step 3 */}
+            {/* Step 3 — Environment Variables */}
             <div>
               <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  3
-                </span>
+                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">3</span>
                 Environment Variables
               </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Copy the example env file and fill in your keys:
-              </p>
+              <p className="text-sm text-gray-400 mb-3">Copy the example env file and fill in your keys:</p>
               <CopyBlock code="cp .env.example .env" />
               <div className="mt-3 bg-[#0a0d1a] border border-[#2A0E61]/50 rounded-lg p-4">
                 <p className="text-xs text-gray-500 mb-2">Key variables to configure:</p>
-                <pre className="text-xs text-gray-400 font-mono leading-relaxed">{`DATABASE_URL="postgresql://..."
-NEXTAUTH_SECRET="your-secret"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Payments (from lemonsqueezy.com or stripe.com)
-PAYMENT_SECRET_KEY="..."
-PAYMENT_WEBHOOK_SECRET="..."
-
-# OAuth Providers
-GOOGLE_CLIENT_ID="..."
-GOOGLE_CLIENT_SECRET="..."
-GITHUB_CLIENT_ID="..."
-GITHUB_CLIENT_SECRET="..."
-
-# AI (optional)
-OPENAI_API_KEY="..."
-ANTHROPIC_API_KEY="..."`}</pre>
+                <pre className="text-xs text-gray-400 font-mono leading-relaxed">{content.envVars}</pre>
               </div>
             </div>
 
-            {/* Step 4 */}
+            {/* Step 4 — Start Databases */}
             <div>
               <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  4
-                </span>
+                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">4</span>
                 Start Databases
               </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Spin up PostgreSQL, MongoDB, and Redis with Docker:
-              </p>
+              <p className="text-sm text-gray-400 mb-3">Spin up {content.databases} with Docker:</p>
               <CopyBlock code="docker compose up -d" />
-              <p className="text-xs text-gray-500 mt-2">
-                This starts: PostgreSQL (5432), MongoDB (27017), Redis (6379), pgAdmin (5050), Mongo Express (8081), Mailpit (8025)
-              </p>
+              <p className="text-xs text-gray-500 mt-2">This starts: {content.databasePorts}</p>
             </div>
 
-            {/* Step 5 */}
+            {/* Step 5 — Set Up Database */}
             <div>
               <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  5
-                </span>
+                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">5</span>
                 Set Up the Database
               </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Generate the Prisma client and push the schema:
-              </p>
+              <p className="text-sm text-gray-400 mb-3">Generate the Prisma client and push the schema:</p>
               <div className="space-y-2">
                 <CopyBlock code="pnpm db:generate" label="Generate Prisma client" />
                 <CopyBlock code="pnpm db:push" label="Push schema to database" />
@@ -261,112 +410,118 @@ ANTHROPIC_API_KEY="..."`}</pre>
               </div>
             </div>
 
-            {/* Step 6 */}
+            {/* Step 6 — Launch Dev Server */}
             <div>
               <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  6
-                </span>
+                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">6</span>
                 Launch the Dev Server
               </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Start all apps in development mode with Turborepo:
-              </p>
+              <p className="text-sm text-gray-400 mb-3">Start all apps in development mode:</p>
               <CopyBlock code="pnpm dev" />
               <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-lg px-3 py-2">
-                  <span className="text-[#b49bff] font-medium">Web App</span>
-                  <span className="text-gray-500 ml-2">localhost:3000</span>
-                </div>
-                <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-lg px-3 py-2">
-                  <span className="text-[#b49bff] font-medium">API Server</span>
-                  <span className="text-gray-500 ml-2">localhost:4000</span>
-                </div>
-                <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-lg px-3 py-2">
-                  <span className="text-[#b49bff] font-medium">Mobile</span>
-                  <span className="text-gray-500 ml-2">localhost:3001</span>
-                </div>
-                <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-lg px-3 py-2">
-                  <span className="text-[#b49bff] font-medium">Admin</span>
-                  <span className="text-gray-500 ml-2">localhost:3002</span>
-                </div>
-                <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-lg px-3 py-2">
-                  <span className="text-[#b49bff] font-medium">Docs</span>
-                  <span className="text-gray-500 ml-2">localhost:3003</span>
-                </div>
-                <div className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-lg px-3 py-2">
-                  <span className="text-[#b49bff] font-medium">Mailpit</span>
-                  <span className="text-gray-500 ml-2">localhost:8025</span>
-                </div>
+                {content.apps.map((app) => (
+                  <div key={app.name} className="bg-[#0a0d1a] border border-[#2A0E61]/30 rounded-lg px-3 py-2">
+                    <span className="text-[#b49bff] font-medium">{app.name}</span>
+                    {app.port ? (
+                      <span className="text-gray-500 ml-2">{app.port}</span>
+                    ) : (
+                      <span className="text-gray-600 ml-2">native</span>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Step 7 */}
-            <div>
-              <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  7
-                </span>
-                Using the CLI Scaffolding Tool
-              </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Use the included CLI to scaffold new features interactively:
-              </p>
-              <CopyBlock code="npx create-launchkit" />
-              <p className="text-xs text-gray-500 mt-2">
-                Choose your platforms (Web, API, Mobile, Desktop, Admin), pricing tier, features (Auth, Payments, Storage, Email, Analytics), database provider, and deployment target.
-              </p>
-            </div>
+            {/* Step 7 — CLI (only for starter/pro/enterprise) */}
+            {content.cliNote && (
+              <div>
+                <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">7</span>
+                  Using the CLI Scaffolding Tool
+                </h3>
+                <p className="text-sm text-gray-400 mb-3">Use the included CLI to scaffold new features:</p>
+                <CopyBlock code="npx create-launchkit" />
+              </div>
+            )}
 
-            {/* Step 8 */}
+            {/* Deploy step */}
             <div>
               <h3 className="text-sm font-semibold text-[#b49bff] mb-2 flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#7042f8]/20 border border-[#7042f8]/40 flex items-center justify-center text-xs font-bold">
-                  8
+                  {content.cliNote ? "8" : "7"}
                 </span>
                 Deploy to Production
               </h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Build and deploy to Vercel, Railway, or your own infrastructure:
-              </p>
+              <p className="text-sm text-gray-400 mb-3">Build and deploy:</p>
               <CopyBlock code="pnpm build" label="Build all apps" />
               <p className="text-xs text-gray-500 mt-2">
-                Each app can be deployed independently. The web app and docs are pre-configured for Vercel. The API server supports Vercel, Railway, Render, Cloudflare Workers, or self-hosting.
+                Deployment guides included: {content.deployGuides.join(", ")}.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Monorepo Structure Reference */}
+        {/* Dynamic Project Structure */}
         <div className="rounded-2xl border border-[#2A0E61]/50 bg-[#0c0f1a]/80 backdrop-blur p-6 md:p-8 mb-8">
-          <h2 className="text-lg font-semibold text-white mb-4">Project Structure</h2>
-          <pre className="text-xs text-gray-400 font-mono leading-relaxed overflow-x-auto">{`launchkit/
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white">Project Structure</h2>
+            <span className="text-xs px-2.5 py-1 rounded-full bg-[#7042f8]/10 border border-[#7042f8]/30 text-[#b49bff]">
+              {tierLabel} Plan
+            </span>
+          </div>
+          <pre className="text-xs text-gray-400 font-mono leading-relaxed overflow-x-auto">
+{`${content.repoName}/
 ├── apps/
-│   ├── web/         # Next.js 16 — Main SaaS web app
-│   ├── api/         # Hono — REST API server
-│   ├── admin/       # Admin dashboard
-│   ├── mobile/      # Capacitor.js — iOS & Android
-│   ├── desktop/     # Electron — Desktop app
-│   └── docs/        # Fumadocs — Documentation site
+${content.apps.map((app, i) => {
+  const prefix = i === content.apps.length - 1 ? "│   └──" : "│   ├──";
+  const dirName = app.name.toLowerCase().replace(/ /g, "").replace("webapp", "web").replace("apiserver", "api");
+  const nameMap: Record<string, string> = { "Web App": "web", "API Server": "api", Mobile: "mobile", Desktop: "desktop", Admin: "admin", Docs: "docs" };
+  const dir = nameMap[app.name] || dirName;
+  return `${prefix} ${dir.padEnd(14)} # ${app.description}`;
+}).join("\n")}
 ├── packages/
-│   ├── ui/          # shadcn/ui + Radix + Tailwind components
-│   ├── database/    # Prisma ORM + PostgreSQL schema
-│   ├── auth/        # NextAuth.js (Google, GitHub, credentials)
-│   ├── payments/    # Lemon Squeezy / Stripe billing & licensing
-│   ├── storage/     # Vercel Blob / S3 / Cloudflare R2
-│   ├── email/       # Resend, Nodemailer, SendGrid
-│   ├── ai/          # OpenAI, Anthropic, Google AI
-│   ├── realtime/    # Socket.io WebSocket support
-│   ├── security/    # GeoIP, threat detection, brute force
-│   ├── monitoring/  # Error tracking & performance
-│   ├── notifications/ # In-app notification system
-│   ├── nosql/       # MongoDB/Mongoose
-│   ├── shared/      # Zod types, utilities, constants
-│   └── sdk-cli/     # create-launchkit CLI tool
+${content.packages.map((pkg, i) => {
+  const prefix = i === content.packages.length - 1 ? "│   └──" : "│   ├──";
+  return `${prefix} ${pkg.name.padEnd(18)} # ${pkg.description}`;
+}).join("\n")}
+├── deploy/
+${content.deployGuides.map((guide, i) => {
+  const prefix = i === content.deployGuides.length - 1 ? "│   └──" : "│   ├──";
+  return `${prefix} ${guide.toLowerCase().padEnd(14)} # ${guide} deployment`;
+}).join("\n")}
 ├── docker-compose.yml
 ├── turbo.json
-└── pnpm-workspace.yaml`}</pre>
+└── pnpm-workspace.yaml`}
+          </pre>
         </div>
+
+        {/* Enterprise-specific note */}
+        {tier === "enterprise" && (
+          <div className="rounded-2xl border border-[#7042f8]/30 bg-gradient-to-br from-[#7042f8]/10 to-transparent p-6 mb-8">
+            <h3 className="text-white font-semibold mb-2">🎯 Enterprise — What&apos;s Next</h3>
+            <p className="text-sm text-gray-400 mb-3">
+              Your Enterprise plan includes hands-on services in addition to the full SDK:
+            </p>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li className="flex items-start gap-2">
+                <RxCheck className="w-4 h-4 text-[#b49bff] mt-0.5 flex-shrink-0" />
+                <span><strong>Onboarding call</strong> — David will reach out within 24 hours to schedule your session</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <RxCheck className="w-4 h-4 text-[#b49bff] mt-0.5 flex-shrink-0" />
+                <span><strong>Architecture review</strong> — Share your requirements and get a tailored plan</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <RxCheck className="w-4 h-4 text-[#b49bff] mt-0.5 flex-shrink-0" />
+                <span><strong>20 hrs custom development</strong> — Starts after your onboarding call</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <RxCheck className="w-4 h-4 text-[#b49bff] mt-0.5 flex-shrink-0" />
+                <span><strong>Dedicated Slack/Discord channel</strong> — Active for 90 days</span>
+              </li>
+            </ul>
+          </div>
+        )}
 
         {/* Support */}
         <div className="rounded-2xl border border-[#7042f8]/20 bg-gradient-to-br from-[#7042f8]/5 to-transparent p-6 text-center mb-8">
